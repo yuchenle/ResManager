@@ -8,7 +8,7 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>ResManager</AssemblyName>
     <RootNamespace>ResManager</RootNamespace>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>x64\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
