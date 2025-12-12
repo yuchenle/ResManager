@@ -11,6 +11,7 @@
     <Window.Resources>
         <converters:TotalConverter x:Key="TotalConverter"/>
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <converters:TableEqualityConverter x:Key="TableEqualityConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -71,13 +72,16 @@
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Style.Triggers>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.SelectedTable}" Value="{Binding}"/>
-                                                        </MultiDataTrigger.Conditions>
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{StaticResource TableEqualityConverter}">
+                                                                <Binding/>
+                                                                <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="DataContext.SelectedTable"/>
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
                                                         <Setter Property="BorderBrush" Value="Blue"/>
                                                         <Setter Property="BorderThickness" Value="2"/>
-                                                    </MultiDataTrigger>
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
