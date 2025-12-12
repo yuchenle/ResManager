@@ -10,6 +10,7 @@
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <converters:TotalConverter x:Key="TotalConverter"/>
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -37,16 +38,76 @@
 
             <!-- Tables Panel -->
             <GroupBox Grid.Column="0" Header="Tables" Margin="0,0,5,0">
-                <ListBox ItemsSource="{Binding Tables}" 
-                         SelectedItem="{Binding SelectedTable}"
-                         DisplayMemberPath="ToString">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="5"/>
-                            <Setter Property="Margin" Value="2"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Create Table Button -->
+                    <Button Grid.Row="0" 
+                            Content="+ Create Table" 
+                            Command="{Binding CreateTableCommand}"
+                            Margin="0,0,0,10" 
+                            Padding="10,5"
+                            HorizontalAlignment="Stretch"/>
+                    
+                    <!-- Tables Grid View -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Tables}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="Gray" 
+                                            BorderThickness="1" 
+                                            Margin="3"
+                                            Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
+                                            Cursor="Hand"
+                                            MouseLeftButtonDown="TableBorder_MouseLeftButtonDown">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.SelectedTable}" Value="{Binding}"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="BorderBrush" Value="Blue"/>
+                                                        <Setter Property="BorderThickness" Value="2"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel Margin="10">
+                                            <TextBlock Text="{Binding Id, StringFormat='Table {0}'}" 
+                                                       FontWeight="Bold" 
+                                                       FontSize="14"
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Location}" 
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,2,0,0"/>
+                                            <TextBlock FontSize="11"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,2,0,0">
+                                                <Run Text="{Binding Capacity}"/>
+                                                <Run Text=" seats"/>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Status}" 
+                                                       FontSize="10"
+                                                       HorizontalAlignment="Center"
+                                                       Margin="0,5,0,0"
+                                                       FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
             </GroupBox>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="LightGray"/>

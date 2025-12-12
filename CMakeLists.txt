@@ -63,14 +63,35 @@ add_custom_target(restore
 )
 
 # Custom target to build the project
-add_custom_target(build
-    COMMAND ${DOTNET_EXE} build ${PROJECT_FILE} 
-        --configuration ${CMAKE_BUILD_TYPE}
-        --output ${OUTPUT_DIR}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    DEPENDS restore
-    COMMENT "Building ResManager..."
-)
+# For multi-config generators (like Visual Studio), use generator expression to respect --config
+# For single-config generators, CMAKE_BUILD_TYPE will be used
+if(CMAKE_CONFIGURATION_TYPES)
+    # Multi-config generator (e.g., Visual Studio)
+    # Use generator expression to get the actual build configuration
+    add_custom_target(build
+        COMMAND ${DOTNET_EXE} build ${PROJECT_FILE} 
+            --configuration $<CONFIG>
+            --output ${OUTPUT_DIR}/$<CONFIG>
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS restore
+        COMMENT "Building ResManager ($<CONFIG>)..."
+    )
+else()
+    # Single-config generator (e.g., Unix Makefiles)
+    # Use Release configuration by default if CMAKE_BUILD_TYPE is not set
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Release")
+    endif()
+    
+    add_custom_target(build
+        COMMAND ${DOTNET_EXE} build ${PROJECT_FILE} 
+            --configuration ${CMAKE_BUILD_TYPE}
+            --output ${OUTPUT_DIR}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS restore
+        COMMENT "Building ResManager (${CMAKE_BUILD_TYPE})..."
+    )
+endif()
 
 # Custom target to run the application
 add_custom_target(run

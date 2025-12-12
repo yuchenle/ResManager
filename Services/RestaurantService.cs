@@ -116,12 +116,20 @@ namespace ResManager.Services
 
         private void InitializeSampleData()
         {
-            // Sample tables
-            AddTable(new Table { Capacity = 2, Location = "Window", Status = TableStatus.Available });
-            AddTable(new Table { Capacity = 4, Location = "Center", Status = TableStatus.Available });
-            AddTable(new Table { Capacity = 6, Location = "Private", Status = TableStatus.Available });
-            AddTable(new Table { Capacity = 2, Location = "Window", Status = TableStatus.Available });
-            AddTable(new Table { Capacity = 4, Location = "Center", Status = TableStatus.Available });
+            // Initialize with 20 default tables
+            string[] locations = { "Window", "Center", "Private", "Patio", "Main Hall" };
+            int[] capacities = { 2, 4, 6, 8 };
+            Random random = new Random();
+
+            for (int i = 0; i < 20; i++)
+            {
+                AddTable(new Table 
+                { 
+                    Capacity = capacities[random.Next(capacities.Length)],
+                    Location = locations[random.Next(locations.Length)],
+                    Status = TableStatus.Available 
+                });
+            }
 
             // Sample dishes
             AddDish(new Dish { Name = "Caesar Salad", Description = "Fresh romaine lettuce with caesar dressing", Price = 12.99m, Category = DishCategory.Appetizer, IsAvailable = true });

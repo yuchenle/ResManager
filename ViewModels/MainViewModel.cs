@@ -1,11 +1,13 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ResManager.Models;
 using ResManager.Services;
+using ResManager.Views;
 
 namespace ResManager.ViewModels
 {
@@ -61,6 +63,7 @@ namespace ResManager.ViewModels
         public ICommand CreateOrderCommand { get; private set; } = null!;
         public ICommand UpdateOrderStatusCommand { get; private set; } = null!;
         public ICommand ClearOrderCommand { get; private set; } = null!;
+        public ICommand CreateTableCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
@@ -69,6 +72,7 @@ namespace ResManager.ViewModels
             CreateOrderCommand = new RelayCommand(CreateOrder, CanCreateOrder);
             UpdateOrderStatusCommand = new RelayCommand<OrderStatus>(UpdateOrderStatus);
             ClearOrderCommand = new RelayCommand(ClearOrder);
+            CreateTableCommand = new RelayCommand(CreateTable);
         }
 
         private void AddDishToOrder(Dish? dish)
@@ -152,6 +156,20 @@ namespace ResManager.ViewModels
             {
                 var orders = _restaurantService.GetOrdersByTable(SelectedTable.Id);
                 // You can bind this to a separate collection if needed
+            }
+        }
+
+        private void CreateTable()
+        {
+            var dialog = new CreateTableDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            if (dialog.ShowDialog() == true && dialog.CreatedTable != null)
+            {
+                _restaurantService.AddTable(dialog.CreatedTable);
+                // The ObservableCollection will automatically notify the UI
             }
         }
     }

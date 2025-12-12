@@ -16,7 +16,7 @@ namespace ResManager.Models
         private int _id;
         private int _capacity;
         private TableStatus _status;
-        private string _location;
+        private string _location = string.Empty;
 
         public int Id
         {

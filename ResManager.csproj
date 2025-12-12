@@ -8,11 +8,26 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>ResManager</AssemblyName>
     <RootNamespace>ResManager</RootNamespace>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- Exclude CMake build directory from compilation -->
+    <Compile Remove="build\**" />
+    <Content Remove="build\**" />
+    <EmbeddedResource Remove="build\**" />
+    <None Remove="build\**" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Suppress LIB environment variable warnings -->
+    <NoWarn>$(NoWarn);CS1668</NoWarn>
+  </PropertyGroup>
 
 </Project>
 
