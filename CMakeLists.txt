@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 project(ResManager)
 
+# Enable C++ language as a workaround for linker language detection
+# Note: CMake's native C# support is limited. Since the actual building is done via dotnet CLI,
+# we use CXX here just to satisfy CMake's linker language requirement.
+# The actual compilation and linking is handled by the dotnet CLI, not CMake.
+enable_language(CXX)
+
 # Find .NET SDK
 # Note: find_program automatically searches in PATH environment variable
 # We also check common installation directories (avoiding ProgramFiles(x86) syntax issue)
@@ -56,6 +62,41 @@ set(PROJECT_FILE "${CMAKE_SOURCE_DIR}/ResManager.csproj")
 # Use x64/Configuration structure to match Visual Studio expectations
 set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/x64")
 
+# Collect all source files
+file(GLOB_RECURSE CS_SOURCES
+    "${CMAKE_SOURCE_DIR}/*.cs"
+)
+
+file(GLOB_RECURSE XAML_SOURCES
+    "${CMAKE_SOURCE_DIR}/*.xaml"
+)
+
+# Define the executable target
+# Note: For .NET projects, this creates a CMake target that Visual Studio can recognize
+# The actual building is still done by the 'build' custom target using dotnet CLI
+add_executable(ResManager
+    ${CS_SOURCES}
+    ${XAML_SOURCES}
+    ${CMAKE_SOURCE_DIR}/ResManager.csproj
+    ${CMAKE_SOURCE_DIR}/app.ico
+)
+
+# Set output directory and linker language for the executable
+if(CMAKE_CONFIGURATION_TYPES)
+    set_target_properties(ResManager PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIR}/Debug"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIR}/Release"
+        RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${OUTPUT_DIR}/MinSizeRel"
+        RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${OUTPUT_DIR}/RelWithDebInfo"
+        LINKER_LANGUAGE CXX
+    )
+else()
+    set_target_properties(ResManager PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR}/${CMAKE_BUILD_TYPE}"
+        LINKER_LANGUAGE CXX
+    )
+endif()
+
 # Custom target to restore NuGet packages
 add_custom_target(restore
     COMMAND ${DOTNET_EXE} restore ${PROJECT_FILE}
@@ -74,8 +115,9 @@ if(CMAKE_CONFIGURATION_TYPES)
             --configuration $<CONFIG>
             --output ${OUTPUT_DIR}/$<CONFIG>
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        DEPENDS restore
+        DEPENDS restore ${CS_SOURCES} ${XAML_SOURCES} ${CMAKE_SOURCE_DIR}/ResManager.csproj
         COMMENT "Building ResManager ($<CONFIG>)..."
+        BYPRODUCTS "${OUTPUT_DIR}/$<CONFIG>/ResManager.exe"
     )
 else()
     # Single-config generator (e.g., Unix Makefiles)
@@ -89,10 +131,15 @@ else()
             --configuration ${CMAKE_BUILD_TYPE}
             --output ${OUTPUT_DIR}/${CMAKE_BUILD_TYPE}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        DEPENDS restore
+        DEPENDS restore ${CS_SOURCES} ${XAML_SOURCES} ${CMAKE_SOURCE_DIR}/ResManager.csproj
         COMMENT "Building ResManager (${CMAKE_BUILD_TYPE})..."
+        BYPRODUCTS "${OUTPUT_DIR}/${CMAKE_BUILD_TYPE}/ResManager.exe"
     )
 endif()
+
+# Make ResManager executable depend on the build target
+# This ensures that building ResManager triggers the dotnet build
+add_dependencies(ResManager build)
 
 # Custom target for running the application
 # This target does NOT execute the application during build - it only ensures the build target runs
@@ -105,10 +152,7 @@ if(CMAKE_CONFIGURATION_TYPES)
         DEPENDS build
         COMMENT "Run target - use Visual Studio Start Debugging (green triangle) to execute"
     )
-    
-    # Generate .vcxproj.user file to configure Visual Studio debugger settings
-    # This tells Visual Studio what executable to run when you click Start Debugging
-    # Use absolute paths to ensure Visual Studio can find the executable
+
     get_filename_component(DEBUG_EXE_PATH "${CMAKE_BINARY_DIR}/x64/Debug/ResManager.exe" ABSOLUTE)
     get_filename_component(RELEASE_EXE_PATH "${CMAKE_BINARY_DIR}/x64/Release/ResManager.exe" ABSOLUTE)
     get_filename_component(MINSIZEREL_EXE_PATH "${CMAKE_BINARY_DIR}/x64/MinSizeRel/ResManager.exe" ABSOLUTE)
