@@ -151,46 +151,7 @@ if(CMAKE_CONFIGURATION_TYPES)
         COMMAND ${CMAKE_COMMAND} -E echo "Build complete. Use Visual Studio Start Debugging to run."
         DEPENDS build
         COMMENT "Run target - use Visual Studio Start Debugging (green triangle) to execute"
-    )
-
-    get_filename_component(DEBUG_EXE_PATH "${CMAKE_BINARY_DIR}/x64/Debug/ResManager.exe" ABSOLUTE)
-    get_filename_component(RELEASE_EXE_PATH "${CMAKE_BINARY_DIR}/x64/Release/ResManager.exe" ABSOLUTE)
-    get_filename_component(MINSIZEREL_EXE_PATH "${CMAKE_BINARY_DIR}/x64/MinSizeRel/ResManager.exe" ABSOLUTE)
-    get_filename_component(RELWITHDEBINFO_EXE_PATH "${CMAKE_BINARY_DIR}/x64/RelWithDebInfo/ResManager.exe" ABSOLUTE)
-    get_filename_component(WORKING_DIR "${CMAKE_SOURCE_DIR}" ABSOLUTE)
-    
-    # Convert paths to Windows format with backslashes for the XML file
-    file(TO_NATIVE_PATH "${DEBUG_EXE_PATH}" DEBUG_EXE_PATH_NATIVE)
-    file(TO_NATIVE_PATH "${RELEASE_EXE_PATH}" RELEASE_EXE_PATH_NATIVE)
-    file(TO_NATIVE_PATH "${MINSIZEREL_EXE_PATH}" MINSIZEREL_EXE_PATH_NATIVE)
-    file(TO_NATIVE_PATH "${RELWITHDEBINFO_EXE_PATH}" RELWITHDEBINFO_EXE_PATH_NATIVE)
-    file(TO_NATIVE_PATH "${WORKING_DIR}" WORKING_DIR_NATIVE)
-    
-    file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/run.vcxproj.user"
-        CONTENT "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Project ToolsVersion=\"Current\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">
-  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\">
-    <LocalDebuggerCommand>${DEBUG_EXE_PATH_NATIVE}</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>${WORKING_DIR_NATIVE}</LocalDebuggerWorkingDirectory>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\">
-    <LocalDebuggerCommand>${RELEASE_EXE_PATH_NATIVE}</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>${WORKING_DIR_NATIVE}</LocalDebuggerWorkingDirectory>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='MinSizeRel|x64'\">
-    <LocalDebuggerCommand>${MINSIZEREL_EXE_PATH_NATIVE}</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>${WORKING_DIR_NATIVE}</LocalDebuggerWorkingDirectory>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'\">
-    <LocalDebuggerCommand>${RELWITHDEBINFO_EXE_PATH_NATIVE}</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>${WORKING_DIR_NATIVE}</LocalDebuggerWorkingDirectory>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-</Project>"
-    )
+    )    
 else()
     # Single-config generator (e.g., Unix Makefiles)
     add_custom_target(run
