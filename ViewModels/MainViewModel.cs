@@ -18,17 +18,66 @@ namespace ResManager.ViewModels
         private Dish? _selectedDish;
         private Order? _selectedOrder;
         private ObservableCollection<OrderItem> _currentOrderItems = new();
+        private int _ordersRefreshTrigger;
 
         public MainViewModel()
         {
             _restaurantService = new RestaurantService();
+            _restaurantService.Orders.CollectionChanged += Orders_CollectionChanged;
+            SubscribeToOrderChanges();
             InitializeCommands();
+        }
+
+        private void Orders_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Order order in e.NewItems)
+                {
+                    order.PropertyChanged += Order_PropertyChanged;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (Order order in e.OldItems)
+                {
+                    order.PropertyChanged -= Order_PropertyChanged;
+                }
+            }
+
+            // Notify that Orders collection changed to refresh bindings
+            OnPropertyChanged(nameof(Orders));
+        }
+
+        private void Order_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Order.TotalAmount))
+            {
+                // Trigger binding refresh
+                OrdersRefreshTrigger++;
+            }
+        }
+
+        private void SubscribeToOrderChanges()
+        {
+            foreach (var order in _restaurantService.Orders)
+            {
+                order.PropertyChanged += Order_PropertyChanged;
+            }
         }
 
         public ObservableCollection<Table> Tables => _restaurantService.Tables;
         public ObservableCollection<Dish> Dishes => _restaurantService.Dishes;
         public ObservableCollection<Order> Orders => _restaurantService.Orders;
         public ObservableCollection<Reservation> Reservations => _restaurantService.Reservations;
+
+        // Property that changes when orders are modified to trigger binding updates
+        public int OrdersRefreshTrigger
+        {
+            get => _ordersRefreshTrigger;
+            private set => SetProperty(ref _ordersRefreshTrigger, value);
+        }
 
         public Table? SelectedTable
         {

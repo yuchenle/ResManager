@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -23,6 +24,11 @@ namespace ResManager.Models
         private OrderStatus _status;
         private ObservableCollection<OrderItem> _items = new();
         private string _notes = string.Empty;
+
+        public Order()
+        {
+            _items.CollectionChanged += Items_CollectionChanged;
+        }
 
         public int Id
         {
@@ -69,8 +75,58 @@ namespace ResManager.Models
             get => _items;
             set
             {
-                _items = value;
+                if (_items != null)
+                {
+                    _items.CollectionChanged -= Items_CollectionChanged;
+                    foreach (var item in _items)
+                    {
+                        item.PropertyChanged -= OrderItem_PropertyChanged;
+                    }
+                }
+
+                _items = value ?? new ObservableCollection<OrderItem>();
+                
+                if (_items != null)
+                {
+                    _items.CollectionChanged += Items_CollectionChanged;
+                    foreach (var item in _items)
+                    {
+                        item.PropertyChanged += OrderItem_PropertyChanged;
+                    }
+                }
+
                 OnPropertyChanged(nameof(Items));
+                OnPropertyChanged(nameof(TotalAmount));
+            }
+        }
+
+        private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (OrderItem item in e.NewItems)
+                {
+                    item.PropertyChanged += OrderItem_PropertyChanged;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (OrderItem item in e.OldItems)
+                {
+                    item.PropertyChanged -= OrderItem_PropertyChanged;
+                }
+            }
+
+            OnPropertyChanged(nameof(TotalAmount));
+        }
+
+        private void OrderItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(OrderItem.Subtotal) || 
+                e.PropertyName == nameof(OrderItem.Quantity) || 
+                e.PropertyName == nameof(OrderItem.UnitPrice))
+            {
                 OnPropertyChanged(nameof(TotalAmount));
             }
         }
