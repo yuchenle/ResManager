@@ -18,6 +18,8 @@ namespace ResManager.ViewModels
         private Dish? _selectedDish;
         private Order? _selectedOrder;
         private ObservableCollection<OrderItem> _currentOrderItems = new();
+        private bool _isMenuVisible = false;
+        private bool _isOrderVisible = false;
 
         public MainViewModel()
         {
@@ -58,12 +60,27 @@ namespace ResManager.ViewModels
             set => SetProperty(ref _currentOrderItems, value);
         }
 
+        public bool IsMenuVisible
+        {
+            get => _isMenuVisible;
+            set => SetProperty(ref _isMenuVisible, value);
+        }
+
+        public bool IsOrderVisible
+        {
+            get => _isOrderVisible;
+            set => SetProperty(ref _isOrderVisible, value);
+        }
+
         public ICommand AddDishToOrderCommand { get; private set; } = null!;
         public ICommand RemoveItemFromOrderCommand { get; private set; } = null!;
         public ICommand CreateOrderCommand { get; private set; } = null!;
         public ICommand UpdateOrderStatusCommand { get; private set; } = null!;
         public ICommand ClearOrderCommand { get; private set; } = null!;
         public ICommand CreateTableCommand { get; private set; } = null!;
+        public ICommand ToggleMenuCommand { get; private set; } = null!;
+        public ICommand ToggleOrderCommand { get; private set; } = null!;
+        public ICommand ShowTableDetailsCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
@@ -73,6 +90,9 @@ namespace ResManager.ViewModels
             UpdateOrderStatusCommand = new RelayCommand<OrderStatus>(UpdateOrderStatus);
             ClearOrderCommand = new RelayCommand(ClearOrder);
             CreateTableCommand = new RelayCommand(CreateTable);
+            ToggleMenuCommand = new RelayCommand(() => IsMenuVisible = !IsMenuVisible);
+            ToggleOrderCommand = new RelayCommand(() => IsOrderVisible = !IsOrderVisible);
+            ShowTableDetailsCommand = new RelayCommand<Table>(ShowTableDetails);
         }
 
         private void AddDishToOrder(Dish? dish)
@@ -171,6 +191,18 @@ namespace ResManager.ViewModels
                 _restaurantService.AddTable(dialog.CreatedTable);
                 // The ObservableCollection will automatically notify the UI
             }
+        }
+
+        private void ShowTableDetails(Table? table)
+        {
+            if (table == null) return;
+
+            var detailsWindow = new Views.TableDetailsWindow
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = new TableDetailsViewModel(table, _restaurantService)
+            };
+            detailsWindow.ShowDialog();
         }
     }
 }

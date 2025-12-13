@@ -12,6 +12,7 @@
         <converters:TotalConverter x:Key="TotalConverter"/>
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
         <converters:TableEqualityConverter x:Key="TableEqualityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -19,16 +20,37 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
         <TextBlock Grid.Row="0" Text="Restaurant Management System" 
                    FontSize="24" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+        <!-- Top Bar with Toggle Buttons -->
+        <Border Grid.Row="1" 
+                BorderBrush="LightGray" 
+                BorderThickness="0,0,0,1" 
+                Padding="10,5" 
+                Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Toggle Menu" 
+                        Command="{Binding ToggleMenuCommand}"
+                        Padding="15,5" 
+                        Margin="5,0"
+                        MinWidth="120"/>
+                <Button Content="Toggle Orders" 
+                        Command="{Binding ToggleOrderCommand}"
+                        Padding="15,5" 
+                        Margin="5,0"
+                        MinWidth="120"/>
+            </StackPanel>
+        </Border>
 
         <!-- Main Content -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="5"/>
@@ -114,10 +136,39 @@
                 </Grid>
             </GroupBox>
 
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="LightGray"/>
+            <GridSplitter Grid.Column="1" 
+                          HorizontalAlignment="Stretch" 
+                          Background="LightGray">
+                <GridSplitter.Style>
+                    <Style TargetType="GridSplitter">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMenuVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsOrderVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GridSplitter.Style>
+            </GridSplitter>
 
             <!-- Menu and Orders Panel -->
             <Grid Grid.Column="2" Margin="5,0">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMenuVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsOrderVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="5"/>
@@ -125,7 +176,10 @@
                 </Grid.RowDefinitions>
 
                 <!-- Menu -->
-                <GroupBox Grid.Row="0" Header="Menu" Margin="0,0,0,5">
+                <GroupBox Grid.Row="0" 
+                          Header="Menu" 
+                          Margin="0,0,0,5"
+                          Visibility="{Binding IsMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DataGrid ItemsSource="{Binding Dishes}" 
                               SelectedItem="{Binding SelectedDish}"
                               AutoGenerateColumns="False"
@@ -141,10 +195,30 @@
                     </DataGrid>
                 </GroupBox>
 
-                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Background="LightGray"/>
+                <GridSplitter Grid.Row="1" 
+                              HorizontalAlignment="Stretch" 
+                              Background="LightGray">
+                    <GridSplitter.Style>
+                        <Style TargetType="GridSplitter">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsMenuVisible}" Value="True"/>
+                                        <Condition Binding="{Binding IsOrderVisible}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </GridSplitter.Style>
+                </GridSplitter>
 
                 <!-- Active Orders -->
-                <GroupBox Grid.Row="2" Header="Active Orders" Margin="0,5,0,0">
+                <GroupBox Grid.Row="2" 
+                          Header="Active Orders" 
+                          Margin="0,5,0,0"
+                          Visibility="{Binding IsOrderVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DataGrid ItemsSource="{Binding Orders}" 
                               SelectedItem="{Binding SelectedOrder}"
                               AutoGenerateColumns="False"
@@ -162,10 +236,29 @@
                 </GroupBox>
             </Grid>
 
-            <GridSplitter Grid.Column="3" HorizontalAlignment="Stretch" Background="LightGray"/>
+            <GridSplitter Grid.Column="3" 
+                          HorizontalAlignment="Stretch" 
+                          Background="LightGray">
+                <GridSplitter.Style>
+                    <Style TargetType="GridSplitter">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMenuVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsOrderVisible}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GridSplitter.Style>
+            </GridSplitter>
 
             <!-- Current Order Panel -->
-            <GroupBox Grid.Column="4" Header="Current Order" Margin="5,0,0,0">
+            <GroupBox Grid.Column="4" 
+                      Header="Current Order" 
+                      Margin="5,0,0,0"
+                      Visibility="{Binding IsMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

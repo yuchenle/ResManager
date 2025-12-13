@@ -18,7 +18,7 @@ namespace ResManager
             {
                 if (DataContext is MainViewModel viewModel)
                 {
-                    viewModel.SelectedTable = table;
+                    viewModel.ShowTableDetailsCommand.Execute(table);
                 }
             }
         }
