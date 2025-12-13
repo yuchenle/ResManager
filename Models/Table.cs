@@ -17,6 +17,7 @@ namespace ResManager.Models
         private int _capacity;
         private TableStatus _status;
         private string _location = string.Empty;
+        private string _name = string.Empty;
 
         public int Id
         {
@@ -25,6 +26,16 @@ namespace ResManager.Models
             {
                 _id = value;
                 OnPropertyChanged(nameof(Id));
+            }
+        }
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -67,7 +78,7 @@ namespace ResManager.Models
 
         public override string ToString()
         {
-            return $"Table {Id} - {Location} ({Capacity} seats) - {Status}";
+            return $"{Name} - {Location} ({Capacity} seats) - {Status}";
         }
     }
 }

@@ -27,6 +27,7 @@ namespace ResManager.ViewModels
         }
 
         public int TableId => _table.Id;
+        public string TableName => _table.Name;
         public string Location => _table.Location;
         public TableStatus Status => _table.Status;
 

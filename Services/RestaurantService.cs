@@ -37,6 +37,10 @@ namespace ResManager.Services
         public void AddTable(Table table)
         {
             table.Id = _nextTableId++;
+            if (string.IsNullOrEmpty(table.Name))
+            {
+                table.Name = $"Table {table.Id}";
+            }
             _tables.Add(table);
         }
 

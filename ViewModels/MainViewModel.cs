@@ -19,6 +19,7 @@ namespace ResManager.ViewModels
         private Order? _selectedOrder;
         private ObservableCollection<OrderItem> _currentOrderItems = new();
         private int _ordersRefreshTrigger;
+        private int _takeAwayCount = 0;
 
         public MainViewModel()
         {
@@ -121,6 +122,7 @@ namespace ResManager.ViewModels
         public ICommand UpdateOrderStatusCommand { get; private set; } = null!;
         public ICommand ClearOrderCommand { get; private set; } = null!;
         public ICommand CreateTableCommand { get; private set; } = null!;
+        public ICommand CreateTakeAwayCommand { get; private set; } = null!;
         public ICommand ShowMenuCommand { get; private set; } = null!;
         public ICommand ShowTableDetailsCommand { get; private set; } = null!;
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
@@ -135,6 +137,7 @@ namespace ResManager.ViewModels
             UpdateOrderStatusCommand = new RelayCommand<OrderStatus>(UpdateOrderStatus);
             ClearOrderCommand = new RelayCommand(ClearOrder);
             CreateTableCommand = new RelayCommand(CreateTable);
+            CreateTakeAwayCommand = new RelayCommand(CreateTakeAway);
             ShowMenuCommand = new RelayCommand(ShowMenu);
             ShowTableDetailsCommand = new RelayCommand<Table>(ShowTableDetails);
             ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
@@ -237,6 +240,43 @@ namespace ResManager.ViewModels
             {
                 _restaurantService.AddTable(dialog.CreatedTable);
                 // The ObservableCollection will automatically notify the UI
+            }
+        }
+
+        private void CreateTakeAway()
+        {
+            var vm = new CreateTakeAwayViewModel(_restaurantService);
+            var window = new Views.CreateTakeAwayWindow
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = vm
+            };
+
+            if (window.ShowDialog() == true && vm.CurrentItems.Count > 0)
+            {
+                var table = new Table
+                {
+                    Capacity = 2,
+                    Location = "Take Away",
+                    Status = TableStatus.Available, // AddOrder will update this to Occupied
+                    Name = $"Emp_{_takeAwayCount++}"
+                };
+
+                _restaurantService.AddTable(table);
+
+                var order = new Order
+                {
+                    TableId = table.Id,
+                    Status = OrderStatus.Pending,
+                    Notes = "Take Away"
+                };
+
+                foreach (var item in vm.CurrentItems)
+                {
+                    order.Items.Add(item);
+                }
+
+                _restaurantService.AddOrder(order);
             }
         }
 

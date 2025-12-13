@@ -54,13 +54,22 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     
-                    <!-- Create Table Button -->
-                    <Button Grid.Row="0" 
-                            Content="+ Create Table" 
-                            Command="{Binding CreateTableCommand}"
-                            Margin="0,0,0,10" 
-                            Padding="10,5"
-                            HorizontalAlignment="Stretch"/>
+                    <!-- Create Table and Take Away Buttons -->
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" 
+                                Content="+ Create Table" 
+                                Command="{Binding CreateTableCommand}"
+                                Padding="10,5"/>
+                        <Button Grid.Column="2" 
+                                Content="+ Create Take Away" 
+                                Command="{Binding CreateTakeAwayCommand}"
+                                Padding="10,5"/>
+                    </Grid>
                     
                     <!-- Tables Grid View -->
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -108,7 +117,7 @@
                                                             <Binding Path="Capacity" Converter="{StaticResource TableIconConverter}"/>
                                                         </Image.Source>
                                                     </Image>
-                                                    <TextBlock Text="{Binding Id, StringFormat='Table {0}'}" 
+                                                    <TextBlock Text="{Binding Name}" 
                                                                FontWeight="Bold" 
                                                                FontSize="14"
                                                                HorizontalAlignment="Center"/>
