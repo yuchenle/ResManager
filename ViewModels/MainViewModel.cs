@@ -45,7 +45,14 @@ namespace ResManager.ViewModels
         public Dish? SelectedDish
         {
             get => _selectedDish;
-            set => SetProperty(ref _selectedDish, value);
+            set
+            {
+                SetProperty(ref _selectedDish, value);
+                if (DeleteDishCommand is RelayCommand<Dish> relayCommand)
+                {
+                    relayCommand.NotifyCanExecuteChanged();
+                }
+            }
         }
 
         public Order? SelectedOrder
@@ -81,6 +88,8 @@ namespace ResManager.ViewModels
         public ICommand ToggleMenuCommand { get; private set; } = null!;
         public ICommand ToggleOrderCommand { get; private set; } = null!;
         public ICommand ShowTableDetailsCommand { get; private set; } = null!;
+        public ICommand AddDishCommand { get; private set; } = null!;
+        public ICommand DeleteDishCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
@@ -93,6 +102,8 @@ namespace ResManager.ViewModels
             ToggleMenuCommand = new RelayCommand(() => IsMenuVisible = !IsMenuVisible);
             ToggleOrderCommand = new RelayCommand(() => IsOrderVisible = !IsOrderVisible);
             ShowTableDetailsCommand = new RelayCommand<Table>(ShowTableDetails);
+            AddDishCommand = new RelayCommand(AddDish);
+            DeleteDishCommand = new RelayCommand<Dish>(DeleteDish, CanDeleteDish);
         }
 
         private void AddDishToOrder(Dish? dish)
@@ -203,6 +214,40 @@ namespace ResManager.ViewModels
                 DataContext = new TableDetailsViewModel(table, _restaurantService)
             };
             detailsWindow.ShowDialog();
+        }
+
+        private void AddDish()
+        {
+            var dialog = new Views.CreateDishDialog
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            if (dialog.ShowDialog() == true && dialog.CreatedDish != null)
+            {
+                _restaurantService.AddDish(dialog.CreatedDish);
+            }
+        }
+
+        private bool CanDeleteDish(Dish? dish)
+        {
+            return dish != null;
+        }
+
+        private void DeleteDish(Dish? dish)
+        {
+            if (dish == null) return;
+
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete '{dish.Name}'?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                _restaurantService.RemoveDish(dish);
+            }
         }
     }
 }

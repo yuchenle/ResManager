@@ -180,19 +180,44 @@
                           Header="Menu" 
                           Margin="0,0,0,5"
                           Visibility="{Binding IsMenuVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <DataGrid ItemsSource="{Binding Dishes}" 
-                              SelectedItem="{Binding SelectedDish}"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="80"/>
-                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100"/>
-                            <DataGridCheckBoxColumn Header="Available" Binding="{Binding IsAvailable}" Width="80"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Buttons -->
+                        <StackPanel Grid.Row="0" 
+                                    Orientation="Horizontal" 
+                                    Margin="0,0,0,10">
+                            <Button Content="Add Item" 
+                                    Command="{Binding AddDishCommand}"
+                                    Padding="10,5" 
+                                    Margin="0,0,5,0"
+                                    MinWidth="100"/>
+                            <Button Content="Delete Item" 
+                                    Command="{Binding DeleteDishCommand}"
+                                    CommandParameter="{Binding SelectedDish}"
+                                    Padding="10,5"
+                                    MinWidth="100"/>
+                        </StackPanel>
+                        
+                        <!-- Menu DataGrid -->
+                        <DataGrid Grid.Row="1"
+                                  ItemsSource="{Binding Dishes}" 
+                                  SelectedItem="{Binding SelectedDish}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="80"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100"/>
+                                <DataGridCheckBoxColumn Header="Available" Binding="{Binding IsAvailable}" Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </GroupBox>
 
                 <GridSplitter Grid.Row="1" 

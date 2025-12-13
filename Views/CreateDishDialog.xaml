@@ -1,0 +1,63 @@
+<Window x:Class="ResManager.Views.CreateDishDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:ResManager.Models"
+        Title="Add Menu Item" Height="300" Width="400"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Name -->
+        <TextBlock Grid.Row="0" Text="Name:" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="1" x:Name="NameTextBox" 
+                 Margin="0,0,0,15"/>
+
+        <!-- Price -->
+        <TextBlock Grid.Row="2" Text="Price:" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="3" x:Name="PriceTextBox" 
+                 Text="0.00"
+                 Margin="0,0,0,15"
+                 PreviewTextInput="PriceTextBox_PreviewTextInput"/>
+
+        <!-- Category -->
+        <TextBlock Grid.Row="4" Text="Category:" Margin="0,0,0,5"/>
+        <ComboBox Grid.Row="5" x:Name="CategoryComboBox"
+                  Margin="0,0,0,15">
+            <ComboBox.ItemsSource>
+                <x:Array Type="{x:Type models:DishCategory}">
+                    <models:DishCategory>Appetizer</models:DishCategory>
+                    <models:DishCategory>MainCourse</models:DishCategory>
+                    <models:DishCategory>Dessert</models:DishCategory>
+                    <models:DishCategory>Beverage</models:DishCategory>
+                    <models:DishCategory>Side</models:DishCategory>
+                </x:Array>
+            </ComboBox.ItemsSource>
+        </ComboBox>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="7" Orientation="Horizontal" 
+                    HorizontalAlignment="Right">
+            <Button Content="Add" 
+                    Click="AddButton_Click" 
+                    Width="80" 
+                    Height="30" 
+                    Margin="0,0,10,0"
+                    IsDefault="True"/>
+            <Button Content="Cancel" 
+                    Click="CancelButton_Click" 
+                    Width="80" 
+                    Height="30"
+                    IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
