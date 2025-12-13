@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ResManager.Models;
 using ResManager.Services;
 
@@ -10,11 +12,15 @@ namespace ResManager.ViewModels
     {
         private readonly Table _table;
         private readonly RestaurantService _restaurantService;
+        private Dish? _selectedDish;
+        private Order? _currentOrder;
 
         public TableDetailsViewModel(Table table, RestaurantService restaurantService)
         {
             _table = table;
             _restaurantService = restaurantService;
+            AllOrderItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(TotalPrice));
+            InitializeCommands();
             LoadTableDetails();
         }
 
@@ -24,7 +30,84 @@ namespace ResManager.ViewModels
         public TableStatus Status => _table.Status;
 
         public ObservableCollection<OrderItem> AllOrderItems { get; } = new();
+        public ObservableCollection<Dish> AvailableDishes => _restaurantService.Dishes;
+        
+        public Dish? SelectedDish
+        {
+            get => _selectedDish;
+            set
+            {
+                SetProperty(ref _selectedDish, value);
+                if (AddDishToTableCommand is RelayCommand<Dish> relayCommand)
+                {
+                    relayCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
+
         public decimal TotalPrice => AllOrderItems.Sum(item => item.Subtotal);
+
+        public ICommand AddDishToTableCommand { get; private set; } = null!;
+
+        private void InitializeCommands()
+        {
+            AddDishToTableCommand = new RelayCommand<Dish>(AddDishToTable, CanAddDishToTable);
+        }
+
+        private bool CanAddDishToTable(Dish? dish)
+        {
+            return dish != null && dish.IsAvailable;
+        }
+
+        private void AddDishToTable(Dish? dish)
+        {
+            if (dish == null || !dish.IsAvailable) return;
+
+            // Get or create current order for this table
+            if (_currentOrder == null)
+            {
+                _currentOrder = _restaurantService.Orders
+                    .FirstOrDefault(o => o.TableId == _table.Id && o.Status != OrderStatus.Paid && o.Status != OrderStatus.Cancelled);
+                
+                if (_currentOrder == null)
+                {
+                    // Create new order
+                    _currentOrder = new Order
+                    {
+                        TableId = _table.Id,
+                        Status = OrderStatus.Pending,
+                        Notes = string.Empty
+                    };
+                    _restaurantService.AddOrder(_currentOrder);
+                }
+            }
+
+            // Check if dish already exists in order
+            var existingItem = _currentOrder.Items.FirstOrDefault(i => i.DishId == dish.Id);
+            if (existingItem != null)
+            {
+                existingItem.Quantity++;
+            }
+            else
+            {
+                _currentOrder.Items.Add(new OrderItem
+                {
+                    DishId = dish.Id,
+                    DishName = dish.Name,
+                    UnitPrice = dish.Price,
+                    Quantity = 1
+                });
+            }
+
+            // Refresh the display
+            LoadTableDetails();
+            
+            // Update table status if needed
+            if (_table.Status == TableStatus.Available)
+            {
+                _restaurantService.UpdateTableStatus(_table.Id, TableStatus.Occupied);
+            }
+        }
 
         private void LoadTableDetails()
         {
@@ -48,6 +131,10 @@ namespace ResManager.ViewModels
                     });
                 }
             }
+
+            // Update current order reference
+            _currentOrder = allOrders
+                .FirstOrDefault(o => o.Status != OrderStatus.Paid && o.Status != OrderStatus.Cancelled);
         }
     }
 }
