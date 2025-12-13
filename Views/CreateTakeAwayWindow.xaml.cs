@@ -21,5 +21,17 @@ namespace RestoManager.Views
                 }
             }
         }
+
+        private void OrderItemsDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && DataContext is CreateTakeAwayViewModel viewModel)
+            {
+                if (viewModel.SelectedOrderItem != null && viewModel.RemoveItemCommand.CanExecute(viewModel.SelectedOrderItem))
+                {
+                    viewModel.RemoveItemCommand.Execute(viewModel.SelectedOrderItem);
+                    e.Handled = true;
+                }
+            }
+        }
     }
 }

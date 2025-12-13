@@ -61,7 +61,8 @@
                           SelectionMode="Single"
                           HeadersVisibility="Column"
                           Margin="0,0,0,15"
-                          Focusable="True">
+                          Focusable="True"
+                          PreviewKeyDown="OrderItemsDataGrid_PreviewKeyDown">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Dish Name" Binding="{Binding DishName}" Width="*"/>
                         <DataGridTemplateColumn Header="Quantity" Width="120">

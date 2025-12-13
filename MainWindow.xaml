@@ -7,7 +7,8 @@
         xmlns:converters="clr-namespace:RestoManager.Converters"
         mc:Ignorable="d"
         Title="Restaurant Manager" Height="800" Width="1400"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/app.ico">
     <Window.Resources>
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
         <converters:TableEqualityConverter x:Key="TableEqualityConverter"/>

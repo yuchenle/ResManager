@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -15,26 +14,25 @@ namespace RestoManager.Converters
                 string iconPath;
                 if (capacity <= 2)
                 {
-                    // Try both .ico and .icon extensions
-                    string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "1_2");
-                    iconPath = basePath + ".ico";
-                    if (!File.Exists(iconPath))
-                    {
-                        iconPath = basePath + ".icon";
-                    }
+                    iconPath = "pack://application:,,,/Assets/1_2.ico";
                 }
                 else
                 {
-                    iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "2Plus.ico");
+                    iconPath = "pack://application:,,,/Assets/2Plus.ico";
                 }
 
-                if (File.Exists(iconPath))
+                try 
                 {
                     var bitmap = new BitmapImage();
                     bitmap.BeginInit();
                     bitmap.UriSource = new Uri(iconPath, UriKind.Absolute);
                     bitmap.EndInit();
                     return bitmap;
+                }
+                catch
+                {
+                    // Fallback or swallow exception if resource not found
+                    return null;
                 }
             }
 
