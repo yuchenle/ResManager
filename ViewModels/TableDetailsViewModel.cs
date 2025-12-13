@@ -56,6 +56,14 @@ namespace ResManager.ViewModels
                 {
                     relayCommand.NotifyCanExecuteChanged();
                 }
+                if (IncreaseQuantityCommand is RelayCommand<OrderItem> increaseCommand)
+                {
+                    increaseCommand.NotifyCanExecuteChanged();
+                }
+                if (DecreaseQuantityCommand is RelayCommand<OrderItem> decreaseCommand)
+                {
+                    decreaseCommand.NotifyCanExecuteChanged();
+                }
             }
         }
 
@@ -63,11 +71,15 @@ namespace ResManager.ViewModels
 
         public ICommand AddDishToTableCommand { get; private set; } = null!;
         public ICommand DeleteOrderItemCommand { get; private set; } = null!;
+        public ICommand IncreaseQuantityCommand { get; private set; } = null!;
+        public ICommand DecreaseQuantityCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
             AddDishToTableCommand = new RelayCommand<Dish>(AddDishToTable, CanAddDishToTable);
             DeleteOrderItemCommand = new RelayCommand<OrderItem>(DeleteOrderItem, CanDeleteOrderItem);
+            IncreaseQuantityCommand = new RelayCommand<OrderItem>(IncreaseQuantity, CanModifyQuantity);
+            DecreaseQuantityCommand = new RelayCommand<OrderItem>(DecreaseQuantity, CanModifyQuantity);
         }
 
         private bool CanAddDishToTable(Dish? dish)
@@ -180,6 +192,67 @@ namespace ResManager.ViewModels
             {
                 _currentOrder.Items.Remove(orderItem);
                 
+                // Refresh the display
+                LoadTableDetails();
+                
+                // Update table status if order is empty
+                if (_currentOrder != null && _currentOrder.Items.Count == 0 && _table.Status == TableStatus.Occupied)
+                {
+                    _restaurantService.UpdateTableStatus(_table.Id, TableStatus.Available);
+                }
+            }
+        }
+
+        private bool CanModifyQuantity(OrderItem? item)
+        {
+            // Only allow modification if there's a current active order and an item is provided
+            if (item == null || _currentOrder == null) return false;
+            
+            // Check if the item belongs to the current active order
+            return _currentOrder.Items.Any(i => 
+                i.DishId == item.DishId && 
+                i.DishName == item.DishName &&
+                i.UnitPrice == item.UnitPrice);
+        }
+
+        private void IncreaseQuantity(OrderItem? item)
+        {
+            if (item == null || _currentOrder == null) return;
+
+            // Find the corresponding item in the actual order
+            var orderItem = _currentOrder.Items.FirstOrDefault(i => 
+                i.DishId == item.DishId && 
+                i.DishName == item.DishName &&
+                i.UnitPrice == item.UnitPrice);
+
+            if (orderItem != null)
+            {
+                orderItem.Quantity++;
+                // Refresh the display
+                LoadTableDetails();
+            }
+        }
+
+        private void DecreaseQuantity(OrderItem? item)
+        {
+            if (item == null || _currentOrder == null) return;
+
+            // Find the corresponding item in the actual order
+            var orderItem = _currentOrder.Items.FirstOrDefault(i => 
+                i.DishId == item.DishId && 
+                i.DishName == item.DishName &&
+                i.UnitPrice == item.UnitPrice);
+
+            if (orderItem != null && orderItem.Quantity > 1)
+            {
+                orderItem.Quantity--;
+                // Refresh the display
+                LoadTableDetails();
+            }
+            else if (orderItem != null && orderItem.Quantity == 1)
+            {
+                // If quantity is 1, remove the item instead
+                _currentOrder.Items.Remove(orderItem);
                 // Refresh the display
                 LoadTableDetails();
                 

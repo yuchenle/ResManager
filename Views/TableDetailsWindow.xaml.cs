@@ -31,5 +31,16 @@ namespace ResManager.Views
                 e.Handled = true;
             }
         }
+
+        private void MenuItemsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is TableDetailsViewModel viewModel && viewModel.SelectedDish != null)
+            {
+                if (viewModel.AddDishToTableCommand.CanExecute(viewModel.SelectedDish))
+                {
+                    viewModel.AddDishToTableCommand.Execute(viewModel.SelectedDish);
+                }
+            }
+        }
     }
 }

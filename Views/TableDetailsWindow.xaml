@@ -78,7 +78,42 @@
                   PreviewKeyDown="OrderItemsDataGrid_PreviewKeyDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Dish Name" Binding="{Binding DishName}" Width="*"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
+                <DataGridTemplateColumn Header="Quantity" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0"
+                                        Content="-"
+                                        Command="{Binding DataContext.DecreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Width="30"
+                                        Height="25"
+                                        Margin="0,0,5,0"
+                                        Padding="0"
+                                        FontWeight="Bold"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Quantity}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           FontWeight="SemiBold"/>
+                                <Button Grid.Column="2"
+                                        Content="+"
+                                        Command="{Binding DataContext.IncreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Width="30"
+                                        Height="25"
+                                        Margin="5,0,0,0"
+                                        Padding="0"
+                                        FontWeight="Bold"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat=C}" Width="100"/>
                 <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat=C}" Width="100"/>
             </DataGrid.Columns>
@@ -127,7 +162,8 @@
                           IsReadOnly="True"
                           SelectionMode="Single"
                           HeadersVisibility="Column"
-                          Margin="0,0,0,10">
+                          Margin="0,0,0,10"
+                          MouseDoubleClick="MenuItemsDataGrid_MouseDoubleClick">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
                         <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="80"/>
