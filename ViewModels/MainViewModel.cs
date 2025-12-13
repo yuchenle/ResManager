@@ -123,6 +123,7 @@ namespace ResManager.ViewModels
         public ICommand CreateTableCommand { get; private set; } = null!;
         public ICommand ShowMenuCommand { get; private set; } = null!;
         public ICommand ShowTableDetailsCommand { get; private set; } = null!;
+        public ICommand ShowCheckoutCommand { get; private set; } = null!;
         public ICommand AddDishCommand { get; private set; } = null!;
         public ICommand DeleteDishCommand { get; private set; } = null!;
 
@@ -136,6 +137,7 @@ namespace ResManager.ViewModels
             CreateTableCommand = new RelayCommand(CreateTable);
             ShowMenuCommand = new RelayCommand(ShowMenu);
             ShowTableDetailsCommand = new RelayCommand<Table>(ShowTableDetails);
+            ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
             AddDishCommand = new RelayCommand(AddDish);
             DeleteDishCommand = new RelayCommand<Dish>(DeleteDish, CanDeleteDish);
         }
@@ -257,6 +259,18 @@ namespace ResManager.ViewModels
                 DataContext = new TableDetailsViewModel(table, _restaurantService)
             };
             detailsWindow.ShowDialog();
+        }
+
+        private void ShowCheckout(Table? table)
+        {
+            if (table == null) return;
+
+            var checkoutWindow = new Views.CheckoutWindow
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = new CheckoutViewModel(table, _restaurantService)
+            };
+            checkoutWindow.ShowDialog();
         }
 
         private void AddDish()

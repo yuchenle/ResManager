@@ -20,6 +20,7 @@ namespace ResManager.ViewModels
         {
             _table = table;
             _restaurantService = restaurantService;
+            _temporaryCapacity = table.Capacity; // Initialize with actual capacity
             AllOrderItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(TotalPrice));
             InitializeCommands();
             LoadTableDetails();
@@ -27,8 +28,14 @@ namespace ResManager.ViewModels
 
         public int TableId => _table.Id;
         public string Location => _table.Location;
-        public int Capacity => _table.Capacity;
         public TableStatus Status => _table.Status;
+
+        private int _temporaryCapacity;
+        public int Capacity
+        {
+            get => _temporaryCapacity;
+            set => SetProperty(ref _temporaryCapacity, value);
+        }
 
         public ObservableCollection<OrderItem> AllOrderItems { get; } = new();
         public ObservableCollection<Dish> AvailableDishes => _restaurantService.Dishes;

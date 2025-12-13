@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using ResManager.ViewModels;
@@ -41,6 +42,13 @@ namespace ResManager.Views
                     viewModel.AddDishToTableCommand.Execute(viewModel.SelectedDish);
                 }
             }
+        }
+
+        private void SeatsTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Only allow numeric input
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

@@ -78,57 +78,61 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         
-                                        <Border Grid.Column="0"
-                                                BorderBrush="Gray" 
-                                                BorderThickness="1" 
-                                                Width="96"
-                                                Height="96"
-                                                Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
-                                                Cursor="Hand"
-                                                MouseLeftButtonDown="TableBorder_MouseLeftButtonDown">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Value="True">
-                                                            <DataTrigger.Binding>
-                                                                <MultiBinding Converter="{StaticResource TableEqualityConverter}">
-                                                                    <Binding/>
-                                                                    <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="DataContext.SelectedTable"/>
-                                                                </MultiBinding>
-                                                            </DataTrigger.Binding>
-                                                            <Setter Property="BorderBrush" Value="Blue"/>
-                                                            <Setter Property="BorderThickness" Value="2"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <StackPanel Margin="10" HorizontalAlignment="Center">
-                                                <Image Width="48" Height="48" Margin="0,0,0,5">
-                                                    <Image.Source>
-                                                        <Binding Path="Capacity" Converter="{StaticResource TableIconConverter}"/>
-                                                    </Image.Source>
-                                                </Image>
-                                                <TextBlock Text="{Binding Id, StringFormat='Table {0}'}" 
-                                                           FontWeight="Bold" 
-                                                           FontSize="14"
-                                                           HorizontalAlignment="Center"/>
-                                                <TextBlock Text="{Binding Location}" 
-                                                           FontSize="12"
-                                                           HorizontalAlignment="Center"
-                                                           Margin="0,2,0,0"/>
-                                                <TextBlock FontSize="11"
-                                                           HorizontalAlignment="Center"
-                                                           Margin="0,2,0,0">
-                                                    <Run Text="{Binding Capacity}"/>
-                                                    <Run Text=" seats"/>
-                                                </TextBlock>
-                                                <TextBlock Text="{Binding Status}" 
-                                                           FontSize="10"
-                                                           HorizontalAlignment="Center"
-                                                           Margin="0,5,0,0"
-                                                           FontWeight="SemiBold"/>
-                                            </StackPanel>
-                                        </Border>
+                                        <StackPanel Grid.Column="0">
+                                            <Border BorderBrush="Gray" 
+                                                    BorderThickness="1" 
+                                                    Width="96"
+                                                    Height="96"
+                                                    Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
+                                                    Cursor="Hand"
+                                                    MouseLeftButtonDown="TableBorder_MouseLeftButtonDown">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Value="True">
+                                                                <DataTrigger.Binding>
+                                                                    <MultiBinding Converter="{StaticResource TableEqualityConverter}">
+                                                                        <Binding/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="DataContext.SelectedTable"/>
+                                                                    </MultiBinding>
+                                                                </DataTrigger.Binding>
+                                                                <Setter Property="BorderBrush" Value="Blue"/>
+                                                                <Setter Property="BorderThickness" Value="2"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <StackPanel Margin="10" HorizontalAlignment="Center">
+                                                    <Image Width="48" Height="48" Margin="0,0,0,5">
+                                                        <Image.Source>
+                                                            <Binding Path="Capacity" Converter="{StaticResource TableIconConverter}"/>
+                                                        </Image.Source>
+                                                    </Image>
+                                                    <TextBlock Text="{Binding Id, StringFormat='Table {0}'}" 
+                                                               FontWeight="Bold" 
+                                                               FontSize="14"
+                                                               HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Location}" 
+                                                               FontSize="12"
+                                                               HorizontalAlignment="Center"
+                                                               Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                            
+                                            <Button Content="Checkout" 
+                                                    Command="{Binding DataContext.ShowCheckoutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Width="70"
+                                                    Height="22"
+                                                    FontSize="10"
+                                                    FontWeight="SemiBold"
+                                                    Padding="4,2"
+                                                    Margin="0,5,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    Background="LightBlue"
+                                                    BorderBrush="DarkBlue"
+                                                    BorderThickness="1"/>
+                                        </StackPanel>
                                         
                                         <!-- Transparent overlay panel showing seats and total price -->
                                         <Border Grid.Column="1"
@@ -164,4 +168,3 @@
         </Grid>
     </Grid>
 </Window>
-
