@@ -148,7 +148,8 @@
                               IsReadOnly="True"
                               SelectionMode="Single"
                               HeadersVisibility="Column"
-                              Margin="0,0,0,10">
+                              Margin="0,0,0,10"
+                              MouseDoubleClick="MenuItemsDataGrid_MouseDoubleClick">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
                             <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="80"/>
