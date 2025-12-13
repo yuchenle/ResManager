@@ -49,6 +49,7 @@
                     HorizontalAlignment="Right">
             <Button Content="Add" 
                     Click="AddButton_Click" 
+                    Style="{StaticResource CallToActionButtonStyle}"
                     Width="80" 
                     Height="30" 
                     Margin="0,0,10,0"

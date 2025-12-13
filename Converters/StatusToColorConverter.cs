@@ -14,14 +14,14 @@ namespace RestoManager.Converters
             {
                 return status switch
                 {
-                    TableStatus.Available => new SolidColorBrush(Colors.LightGreen),
-                    TableStatus.Occupied => new SolidColorBrush(Colors.LightCoral),
-                    TableStatus.Reserved => new SolidColorBrush(Colors.LightYellow),
+                    TableStatus.Available => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#587E76")), // Idle/Muted Teal
+                    TableStatus.Occupied => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A33A3A")), // Attention/Deep Burgundy
+                    TableStatus.Reserved => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#BDAE7F")), // Muted Gold
                     TableStatus.Cleaning => new SolidColorBrush(Colors.LightGray),
-                    _ => new SolidColorBrush(Colors.White)
+                    _ => new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F8F8F8"))
                 };
             }
-            return new SolidColorBrush(Colors.White);
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F8F8F8"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -30,4 +30,3 @@ namespace RestoManager.Converters
         }
     }
 }
-

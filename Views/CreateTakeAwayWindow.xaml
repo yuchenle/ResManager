@@ -13,8 +13,8 @@
 
         <TextBlock Grid.Row="0" 
                    Text="New Take Away Order" 
-                   FontSize="24" 
-                   FontWeight="Bold" 
+                   Style="{StaticResource HeaderTextStyle}"
+                   FontSize="32" 
                    Margin="0,0,0,10"/>
 
         <Grid Grid.Row="1">
@@ -40,7 +40,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
                                Text="Order Items:" 
-                               FontSize="16" 
+                               FontSize="22" 
                                FontWeight="Bold" 
                                VerticalAlignment="Center"/>
                     <Button Grid.Column="1"
@@ -78,8 +78,8 @@
                                                 Content="-"
                                                 Command="{Binding DataContext.DecreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 CommandParameter="{Binding}"
-                                                Width="30"
-                                                Height="25"
+                                                Width="40"
+                                                Height="35"
                                                 Margin="0,0,5,0"
                                                 Padding="0"
                                                 FontWeight="Bold"/>
@@ -92,8 +92,8 @@
                                                 Content="+"
                                                 Command="{Binding DataContext.IncreaseQuantityCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 CommandParameter="{Binding}"
-                                                Width="30"
-                                                Height="25"
+                                                Width="40"
+                                                Height="35"
                                                 Margin="5,0,0,0"
                                                 Padding="0"
                                                 FontWeight="Bold"/>
@@ -108,18 +108,18 @@
 
                 <!-- Total Price -->
                 <Border Grid.Row="2" 
-                        BorderBrush="Gray" 
+                        BorderBrush="{StaticResource AccentBackgroundBrush}" 
                         BorderThickness="1" 
                         Padding="10" 
-                        Background="LightGray">
+                        Background="White">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <TextBlock Text="Total: " 
-                                   FontSize="18" 
+                                   FontSize="24" 
                                    FontWeight="Bold" 
                                    VerticalAlignment="Center"
                                    Margin="0,0,10,0"/>
                         <TextBlock Text="{Binding TotalPrice, StringFormat=C}" 
-                                   FontSize="20" 
+                                   FontSize="26" 
                                    FontWeight="Bold"/>
                     </StackPanel>
                 </Border>
@@ -128,7 +128,7 @@
             <!-- Splitter -->
             <GridSplitter Grid.Column="1" 
                           HorizontalAlignment="Stretch" 
-                          Background="LightGray"/>
+                          Background="{StaticResource AccentBackgroundBrush}"/>
 
             <!-- Right Panel: Menu Items -->
             <GroupBox Grid.Column="2" 
@@ -163,6 +163,7 @@
                             Content="Add to Order"
                             Command="{Binding AddDishCommand}"
                             CommandParameter="{Binding SelectedDish}"
+                            Style="{StaticResource CallToActionButtonStyle}"
                             Padding="10,5"
                             HorizontalAlignment="Stretch"/>
                 </Grid>
@@ -174,11 +175,10 @@
             <Button Content="Confirm" 
                     Command="{Binding ConfirmCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Style="{StaticResource CallToActionButtonStyle}"
                     Width="100" 
                     Height="35" 
-                    Margin="0,0,10,0"
-                    Background="LightGreen"
-                    FontWeight="Bold"/>
+                    Margin="0,0,10,0"/>
             <Button Content="Cancel" 
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"

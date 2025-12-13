@@ -16,6 +16,7 @@
                     Margin="0,0,0,10">
             <Button Content="Add Item" 
                     Command="{Binding AddDishCommand}"
+                    Style="{StaticResource CallToActionButtonStyle}"
                     Padding="10,5" 
                     Margin="0,0,5,0"
                     MinWidth="100"/>

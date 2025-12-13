@@ -27,21 +27,23 @@
 
         <!-- Header -->
         <TextBlock Grid.Row="0" Text="Restaurant Management System" 
-                   FontSize="24" FontWeight="Bold" 
+                   Style="{StaticResource HeaderTextStyle}"
+                   FontSize="32"
                    HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
         <!-- Top Bar with See Menu Button -->
         <Border Grid.Row="1" 
-                BorderBrush="LightGray" 
+                BorderBrush="{StaticResource AccentBackgroundBrush}" 
                 BorderThickness="0,0,0,1" 
                 Padding="10,5" 
                 Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="See Menu" 
                         Command="{Binding ShowMenuCommand}"
-                        Padding="15,5" 
+                        Padding="20,10" 
                         Margin="5,0"
-                        MinWidth="120"/>
+                        MinWidth="150"
+                        FontSize="20"/>
             </StackPanel>
         </Border>
 
@@ -65,11 +67,15 @@
                         <Button Grid.Column="0" 
                                 Content="+ Create Table" 
                                 Command="{Binding CreateTableCommand}"
-                                Padding="10,5"/>
+                                Padding="20,10"
+                                FontSize="20"
+                                MinWidth="180"/>
                         <Button Grid.Column="2" 
                                 Content="+ Create Take Away" 
                                 Command="{Binding CreateTakeAwayCommand}"
-                                Padding="10,5"/>
+                                Padding="20,10"
+                                FontSize="20"
+                                MinWidth="180"/>
                     </Grid>
                     
                     <!-- Tables Grid View -->
@@ -89,10 +95,10 @@
                                         </Grid.ColumnDefinitions>
                                         
                                         <StackPanel Grid.Column="0">
-                                            <Border BorderBrush="Gray" 
+                                            <Border BorderBrush="{StaticResource AccentBackgroundBrush}" 
                                                     BorderThickness="1" 
-                                                    Width="96"
-                                                    Height="96"
+                                                    Width="120"
+                                                    Height="120"
                                                     Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
                                                     Cursor="Hand"
                                                     MouseLeftButtonDown="TableBorder_MouseLeftButtonDown">
@@ -106,24 +112,24 @@
                                                                         <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="DataContext.SelectedTable"/>
                                                                     </MultiBinding>
                                                                 </DataTrigger.Binding>
-                                                                <Setter Property="BorderBrush" Value="Blue"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryTextBrush}"/>
                                                                 <Setter Property="BorderThickness" Value="2"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
                                                 <StackPanel Margin="10" HorizontalAlignment="Center">
-                                                    <Image Width="48" Height="48" Margin="0,0,0,5">
+                                                    <Image Width="64" Height="64" Margin="0,0,0,5">
                                                         <Image.Source>
                                                             <Binding Path="Capacity" Converter="{StaticResource TableIconConverter}"/>
                                                         </Image.Source>
                                                     </Image>
                                                     <TextBlock Text="{Binding Name}" 
                                                                FontWeight="Bold" 
-                                                               FontSize="14"
+                                                               FontSize="18"
                                                                HorizontalAlignment="Center"/>
                                                     <TextBlock Text="{Binding Location}" 
-                                                               FontSize="12"
+                                                               FontSize="16"
                                                                HorizontalAlignment="Center"
                                                                Margin="0,2,0,0"/>
                                                 </StackPanel>
@@ -132,16 +138,13 @@
                                             <Button Content="Checkout" 
                                                     Command="{Binding DataContext.ShowCheckoutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding}"
-                                                    Width="70"
-                                                    Height="22"
-                                                    FontSize="10"
-                                                    FontWeight="SemiBold"
-                                                    Padding="4,2"
+                                                    Style="{StaticResource CallToActionButtonStyle}"
+                                                    Width="100"
+                                                    Height="35"
+                                                    FontSize="14"
+                                                    Padding="0"
                                                     Margin="0,5,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    Background="LightBlue"
-                                                    BorderBrush="DarkBlue"
-                                                    BorderThickness="1"/>
+                                                    HorizontalAlignment="Center"/>
                                         </StackPanel>
                                         
                                         <!-- Transparent overlay panel showing seats and total price -->
@@ -153,11 +156,11 @@
                                                 Margin="5,0,0,0"
                                                 VerticalAlignment="Top">
                                             <StackPanel>
-                                                <TextBlock FontSize="11" FontWeight="SemiBold" Margin="0,0,0,3">
+                                                <TextBlock FontSize="14" FontWeight="SemiBold" Margin="0,0,0,3">
                                                     <Run Text="Seats: "/>
                                                     <Run Text="{Binding Capacity}"/>
                                                 </TextBlock>
-                                                <TextBlock FontSize="11" FontWeight="SemiBold">
+                                                <TextBlock FontSize="14" FontWeight="SemiBold">
                                                     <TextBlock.Text>
                                                         <MultiBinding Converter="{StaticResource TableTotalPriceConverter}">
                                                             <Binding/>
