@@ -43,21 +43,38 @@
         <!-- Separator -->
         <Separator Grid.Row="2" Margin="0,0,0,10"/>
 
-        <!-- Ordered Dishes Header -->
-        <TextBlock Grid.Row="3" 
-                   Text="Ordered Dishes:" 
-                   FontSize="16" 
-                   FontWeight="Bold" 
-                   Margin="0,0,0,10"/>
+        <!-- Ordered Dishes Header with Delete Button -->
+        <Grid Grid.Row="3" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                       Text="Ordered Dishes:" 
+                       FontSize="16" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1"
+                    Content="Delete Selected"
+                    Command="{Binding DeleteOrderItemCommand}"
+                    CommandParameter="{Binding SelectedOrderItem}"
+                    Padding="10,5"
+                    Margin="10,0,0,0"
+                    MinWidth="120"/>
+        </Grid>
 
         <!-- Order Items -->
         <DataGrid Grid.Row="4" 
                   ItemsSource="{Binding AllOrderItems}"
+                  SelectedItem="{Binding SelectedOrderItem}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   IsReadOnly="True"
+                  SelectionMode="Single"
                   HeadersVisibility="Column"
-                  Margin="0,0,0,15">
+                  Margin="0,0,0,15"
+                  Focusable="True"
+                  PreviewKeyDown="OrderItemsDataGrid_PreviewKeyDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Dish Name" Binding="{Binding DishName}" Width="*"/>
                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>

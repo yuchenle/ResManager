@@ -14,6 +14,7 @@ namespace ResManager.ViewModels
         private readonly RestaurantService _restaurantService;
         private Dish? _selectedDish;
         private Order? _currentOrder;
+        private OrderItem? _selectedOrderItem;
 
         public TableDetailsViewModel(Table table, RestaurantService restaurantService)
         {
@@ -45,13 +46,28 @@ namespace ResManager.ViewModels
             }
         }
 
+        public OrderItem? SelectedOrderItem
+        {
+            get => _selectedOrderItem;
+            set
+            {
+                SetProperty(ref _selectedOrderItem, value);
+                if (DeleteOrderItemCommand is RelayCommand<OrderItem> relayCommand)
+                {
+                    relayCommand.NotifyCanExecuteChanged();
+                }
+            }
+        }
+
         public decimal TotalPrice => AllOrderItems.Sum(item => item.Subtotal);
 
         public ICommand AddDishToTableCommand { get; private set; } = null!;
+        public ICommand DeleteOrderItemCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
             AddDishToTableCommand = new RelayCommand<Dish>(AddDishToTable, CanAddDishToTable);
+            DeleteOrderItemCommand = new RelayCommand<OrderItem>(DeleteOrderItem, CanDeleteOrderItem);
         }
 
         private bool CanAddDishToTable(Dish? dish)
@@ -135,6 +151,44 @@ namespace ResManager.ViewModels
             // Update current order reference
             _currentOrder = allOrders
                 .FirstOrDefault(o => o.Status != OrderStatus.Paid && o.Status != OrderStatus.Cancelled);
+        }
+
+        private bool CanDeleteOrderItem(OrderItem? item)
+        {
+            // Only allow deletion if there's a current active order and an item is selected
+            if (item == null || _currentOrder == null) return false;
+            
+            // Check if the item belongs to the current active order
+            return _currentOrder.Items.Any(i => 
+                i.DishId == item.DishId && 
+                i.DishName == item.DishName &&
+                i.UnitPrice == item.UnitPrice);
+        }
+
+        private void DeleteOrderItem(OrderItem? item)
+        {
+            if (item == null || _currentOrder == null) return;
+
+            // Only allow deletion from the current active order
+            // Find the corresponding item in the actual order by matching key properties
+            var orderItem = _currentOrder.Items.FirstOrDefault(i => 
+                i.DishId == item.DishId && 
+                i.DishName == item.DishName &&
+                i.UnitPrice == item.UnitPrice);
+
+            if (orderItem != null)
+            {
+                _currentOrder.Items.Remove(orderItem);
+                
+                // Refresh the display
+                LoadTableDetails();
+                
+                // Update table status if order is empty
+                if (_currentOrder != null && _currentOrder.Items.Count == 0 && _table.Status == TableStatus.Occupied)
+                {
+                    _restaurantService.UpdateTableStatus(_table.Id, TableStatus.Available);
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using ResManager.ViewModels;
 
 namespace ResManager.Views
@@ -8,6 +9,18 @@ namespace ResManager.Views
         public TableDetailsWindow()
         {
             InitializeComponent();
+        }
+
+        private void OrderItemsDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && DataContext is TableDetailsViewModel viewModel)
+            {
+                if (viewModel.SelectedOrderItem != null && viewModel.DeleteOrderItemCommand.CanExecute(viewModel.SelectedOrderItem))
+                {
+                    viewModel.DeleteOrderItemCommand.Execute(viewModel.SelectedOrderItem);
+                    e.Handled = true;
+                }
+            }
         }
     }
 }
