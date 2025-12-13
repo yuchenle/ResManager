@@ -1,0 +1,54 @@
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Input;
+using RestoManager.ViewModels;
+
+namespace RestoManager.Views
+{
+    public partial class TableDetailsWindow : Window
+    {
+        public TableDetailsWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void OrderItemsDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && DataContext is TableDetailsViewModel viewModel)
+            {
+                if (viewModel.SelectedOrderItem != null && viewModel.DeleteOrderItemCommand.CanExecute(viewModel.SelectedOrderItem))
+                {
+                    viewModel.DeleteOrderItemCommand.Execute(viewModel.SelectedOrderItem);
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                Close();
+                e.Handled = true;
+            }
+        }
+
+        private void MenuItemsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is TableDetailsViewModel viewModel && viewModel.SelectedDish != null)
+            {
+                if (viewModel.AddDishToTableCommand.CanExecute(viewModel.SelectedDish))
+                {
+                    viewModel.AddDishToTableCommand.Execute(viewModel.SelectedDish);
+                }
+            }
+        }
+
+        private void SeatsTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Only allow numeric input
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+    }
+}
