@@ -11,10 +11,17 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Google.Cloud.Firestore" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\*.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="firestore-project.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

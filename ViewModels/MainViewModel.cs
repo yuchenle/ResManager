@@ -68,6 +68,7 @@ namespace RestoManager.ViewModels
             }
         }
 
+        public RestaurantService Service => _restaurantService;
         public ObservableCollection<Table> Tables => _restaurantService.Tables;
         public ObservableCollection<Dish> Dishes => _restaurantService.Dishes;
         public ObservableCollection<Order> Orders => _restaurantService.Orders;
