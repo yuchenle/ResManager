@@ -106,26 +106,58 @@ namespace RestoManager.Services
             }
         }
 
-        private void ProcessNewOrder(DocumentSnapshot document)
-        {
-            // Create a "Take Away" table
-            var table = new Table
-            {
-                Capacity = 2,
-                Location = "Take Away (App)",
-                Status = TableStatus.Occupied,
-                Name = $"Web_{_autoTakeAwayCount++}"
-            };
-            _restaurantService.AddTable(table);
+        private List<Order> _cachedAllOrders;
+        public event Action<Order> NewOrderReceived;
 
-            // Create Order
+        public async Task<List<Order>> GetAllOrdersAsync()
+        {
+            if (_cachedAllOrders != null)
+            {
+                return _cachedAllOrders;
+            }
+
+            if (_db == null)
+            {
+                return new List<Order>();
+            }
+
+            try 
+            {
+                CollectionReference collection = _db.Collection("orders");
+                QuerySnapshot snapshot = await collection.GetSnapshotAsync();
+                
+                var orders = new List<Order>();
+                foreach (var document in snapshot.Documents)
+                {
+                    try 
+                    {
+                        var order = ParseOrderFromDocument(document);
+                        orders.Add(order);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error parsing order {document.Id}: {ex.Message}");
+                    }
+                }
+
+                _cachedAllOrders = orders.OrderByDescending(o => o.OrderTime).ToList();
+                return _cachedAllOrders;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to fetch orders: {ex.Message}", "Firestore Error");
+                return new List<Order>();
+            }
+        }
+
+        private Order ParseOrderFromDocument(DocumentSnapshot document)
+        {
             var order = new Order
             {
-                TableId = table.Id,
+                TableId = 0, 
                 Status = OrderStatus.Pending
             };
 
-            // Safe parsing of Timestamp
             if (document.ContainsField("createdAt"))
             {
                 try
@@ -135,12 +167,10 @@ namespace RestoManager.Services
                 }
                 catch
                 {
-                    // Fallback if not a timestamp
                     order.OrderTime = DateTime.Now;
                 }
             }
 
-            // Parse phone number
             string notes = "App Order";
             if (document.ContainsField("phoneNumber"))
             {
@@ -148,10 +178,8 @@ namespace RestoManager.Services
             }
             order.Notes = notes;
 
-            // Parse items
             if (document.ContainsField("items"))
             {
-                // Using object then casting is safer for nested structures
                 var rawItems = document.GetValue<object>("items");
                 if (rawItems is List<object> itemsList)
                 {
@@ -173,11 +201,33 @@ namespace RestoManager.Services
                     }
                 }
             }
+            return order;
+        }
+
+        private void ProcessNewOrder(DocumentSnapshot document)
+        {
+            var table = new Table
+            {
+                Capacity = 2,
+                Location = "Take Away (App)",
+                Status = TableStatus.Occupied,
+                Name = $"Web_{_autoTakeAwayCount++}"
+            };
+            _restaurantService.AddTable(table);
+
+            var order = ParseOrderFromDocument(document);
+            order.TableId = table.Id;
 
             if (order.Items.Count > 0)
             {
                 _restaurantService.AddOrder(order);
                 PlayNotificationSound();
+
+                if (_cachedAllOrders != null)
+                {
+                    _cachedAllOrders.Insert(0, order);
+                }
+                NewOrderReceived?.Invoke(order);
             }
         }
 

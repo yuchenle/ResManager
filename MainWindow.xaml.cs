@@ -18,6 +18,7 @@ namespace RestoManager
             if (DataContext is MainViewModel vm)
             {
                 _firestoreService = new FirestoreListenerService(vm.Service);
+                vm.FirestoreService = _firestoreService;
                 
                 // Construct path safely
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;

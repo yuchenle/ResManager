@@ -14,6 +14,7 @@ namespace RestoManager.ViewModels
     public partial class MainViewModel : ObservableObject
     {
         private readonly RestaurantService _restaurantService;
+        private FirestoreListenerService? _firestoreService;
         private Dish? _selectedDish;
         private int _ordersRefreshTrigger;
         private int _takeAwayCount = 0;
@@ -66,6 +67,13 @@ namespace RestoManager.ViewModels
         }
 
         public RestaurantService Service => _restaurantService;
+        
+        public FirestoreListenerService? FirestoreService 
+        { 
+            get => _firestoreService; 
+            set => _firestoreService = value; 
+        }
+
         public ObservableCollection<Table> Tables => _restaurantService.Tables;
         public ObservableCollection<Dish> Dishes => _restaurantService.Dishes;
         public ObservableCollection<Order> Orders => _restaurantService.Orders;
@@ -93,6 +101,7 @@ namespace RestoManager.ViewModels
 
         public ICommand CreateTakeAwayCommand { get; private set; } = null!;
         public ICommand ShowMenuCommand { get; private set; } = null!;
+        public ICommand ShowAllOrdersCommand { get; private set; } = null!;
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
         public ICommand AddDishCommand { get; private set; } = null!;
         public ICommand DeleteDishCommand { get; private set; } = null!;
@@ -101,9 +110,27 @@ namespace RestoManager.ViewModels
         {
             CreateTakeAwayCommand = new RelayCommand(CreateTakeAway);
             ShowMenuCommand = new RelayCommand(ShowMenu);
+            ShowAllOrdersCommand = new RelayCommand(ShowAllOrders);
             ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
             AddDishCommand = new RelayCommand(AddDish);
             DeleteDishCommand = new RelayCommand<Dish>(DeleteDish, CanDeleteDish);
+        }
+
+        private void ShowAllOrders()
+        {
+            if (FirestoreService == null)
+            {
+                MessageBox.Show("Firestore service is not initialized yet.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var vm = new AllOrdersViewModel(FirestoreService);
+            var window = new Views.AllOrdersWindow
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
+            window.Show();
         }
 
         private void CreateTakeAway()

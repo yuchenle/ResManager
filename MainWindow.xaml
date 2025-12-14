@@ -43,6 +43,12 @@
                         Margin="5,0"
                         MinWidth="150"
                         FontSize="20"/>
+                <Button Content="See All Orders" 
+                        Command="{Binding ShowAllOrdersCommand}"
+                        Padding="20,10" 
+                        Margin="5,0"
+                        MinWidth="150"
+                        FontSize="20"/>
             </StackPanel>
         </Border>
 
