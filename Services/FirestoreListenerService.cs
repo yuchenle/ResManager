@@ -155,7 +155,8 @@ namespace RestoManager.Services
             var order = new Order
             {
                 TableId = 0, 
-                Status = OrderStatus.Pending
+                Status = OrderStatus.Pending,
+                FirestoreDocumentId = document.Id
             };
 
             if (document.ContainsField("createdAt"))
@@ -282,6 +283,31 @@ namespace RestoManager.Services
                 UnitPrice = price,
                 Quantity = quantity
             });
+        }
+
+        public async Task<bool> DeleteOrdersAsync(List<string> documentIds)
+        {
+            if (_db == null || documentIds == null || documentIds.Count == 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                CollectionReference collection = _db.Collection("orders");
+                var deleteTasks = documentIds.Select(id => collection.Document(id).DeleteAsync());
+                await Task.WhenAll(deleteTasks);
+
+                // Clear cache to force refresh on next load
+                _cachedAllOrders = null;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to delete orders: {ex.Message}", "Firestore Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
     }
 }

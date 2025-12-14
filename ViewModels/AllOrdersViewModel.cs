@@ -1,11 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using RestoManager.Models;
 using RestoManager.Services;
-using System.Windows;
 
 namespace RestoManager.ViewModels
 {
@@ -13,13 +18,16 @@ namespace RestoManager.ViewModels
     {
         private readonly FirestoreListenerService _firestoreService;
         private ObservableCollection<Order> _orders;
-        
+        private IList _selectedOrders = new List<Order>();
+        private bool _hasSelectedOrders;
+
         public AllOrdersViewModel(FirestoreListenerService firestoreService)
         {
             _firestoreService = firestoreService;
             Orders = new ObservableCollection<Order>();
             
             _firestoreService.NewOrderReceived += OnNewOrderReceived;
+            DeleteOrdersCommand = new RelayCommand(DeleteOrders, () => HasSelectedOrders);
             LoadOrdersAsync();
         }
 
@@ -31,6 +39,50 @@ namespace RestoManager.ViewModels
                 _orders = value;
                 OnPropertyChanged(nameof(Orders));
             }
+        }
+
+        public IList SelectedOrders
+        {
+            get => _selectedOrders;
+            set
+            {
+                _selectedOrders = value ?? new List<Order>();
+                UpdateHasSelectedOrders();
+            }
+        }
+
+        public void UpdateSelectedOrders(IEnumerable<Order> orders)
+        {
+            var orderList = new List<Order>();
+            if (orders != null)
+            {
+                orderList.AddRange(orders);
+            }
+            SelectedOrders = orderList;
+        }
+
+        public bool HasSelectedOrders
+        {
+            get => _hasSelectedOrders;
+            private set
+            {
+                if (_hasSelectedOrders != value)
+                {
+                    _hasSelectedOrders = value;
+                    OnPropertyChanged(nameof(HasSelectedOrders));
+                    if (DeleteOrdersCommand is RelayCommand command)
+                    {
+                        command.NotifyCanExecuteChanged();
+                    }
+                }
+            }
+        }
+
+        public ICommand DeleteOrdersCommand { get; }
+
+        private void UpdateHasSelectedOrders()
+        {
+            HasSelectedOrders = _selectedOrders != null && _selectedOrders.Count > 0;
         }
 
         private async void LoadOrdersAsync()
@@ -48,6 +100,61 @@ namespace RestoManager.ViewModels
             {
                 Orders.Insert(0, order);
             });
+        }
+
+        private async void DeleteOrders()
+        {
+            if (_selectedOrders == null || _selectedOrders.Count == 0)
+                return;
+
+            var ordersToDelete = _selectedOrders.Cast<Order>().ToList();
+            var documentIds = ordersToDelete
+                .Where(o => !string.IsNullOrEmpty(o.FirestoreDocumentId))
+                .Select(o => o.FirestoreDocumentId)
+                .ToList();
+
+            if (documentIds.Count == 0)
+            {
+                MessageBox.Show("No valid orders selected for deletion.", "Delete Orders", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Show confirmation dialog
+            var message = documentIds.Count == 1
+                ? "Are you sure you want to delete this order?"
+                : $"Are you sure you want to delete {documentIds.Count} orders?";
+
+            var result = MessageBox.Show(
+                message,
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var success = await _firestoreService.DeleteOrdersAsync(documentIds);
+                if (success)
+                {
+                    // Remove deleted orders from the local collection
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        foreach (var order in ordersToDelete)
+                        {
+                            Orders.Remove(order);
+                        }
+                        _selectedOrders.Clear();
+                        UpdateHasSelectedOrders();
+                    });
+
+                    MessageBox.Show(
+                        documentIds.Count == 1
+                            ? "Order deleted successfully."
+                            : $"{documentIds.Count} orders deleted successfully.",
+                        "Delete Orders",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

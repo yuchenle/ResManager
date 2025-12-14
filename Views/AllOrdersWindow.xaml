@@ -23,12 +23,46 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Web Orders History" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding Source={StaticResource GroupedOrders}}" BorderThickness="0">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Button Content="Delete" 
+                    Command="{Binding DeleteOrdersCommand}"
+                    Padding="15,5"
+                    FontSize="14"
+                    Background="#DC3545"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    IsEnabled="{Binding HasSelectedOrders}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" 
+                                            CornerRadius="4" 
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <ListView Grid.Row="2" 
+                  x:Name="OrdersListView"
+                  ItemsSource="{Binding Source={StaticResource GroupedOrders}}" 
+                  BorderThickness="0"
+                  SelectionMode="Extended"
+                  SelectionChanged="OrdersListView_SelectionChanged">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>

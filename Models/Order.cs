@@ -24,6 +24,7 @@ namespace RestoManager.Models
         private OrderStatus _status;
         private ObservableCollection<OrderItem> _items = new();
         private string _notes = string.Empty;
+        private string _firestoreDocumentId = string.Empty;
 
         public Order()
         {
@@ -138,6 +139,16 @@ namespace RestoManager.Models
             {
                 _notes = value;
                 OnPropertyChanged(nameof(Notes));
+            }
+        }
+
+        public string FirestoreDocumentId
+        {
+            get => _firestoreDocumentId;
+            set
+            {
+                _firestoreDocumentId = value;
+                OnPropertyChanged(nameof(FirestoreDocumentId));
             }
         }
 
