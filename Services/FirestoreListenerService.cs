@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
 using RestoManager.Models;
@@ -176,6 +177,27 @@ namespace RestoManager.Services
             if (order.Items.Count > 0)
             {
                 _restaurantService.AddOrder(order);
+                PlayNotificationSound();
+            }
+        }
+
+        private void PlayNotificationSound()
+        {
+            try
+            {
+                string soundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "notification.mp3");
+                
+                if (File.Exists(soundPath))
+                {
+                    var mediaPlayer = new MediaPlayer();
+                    mediaPlayer.Open(new Uri(soundPath, UriKind.Absolute));
+                    mediaPlayer.Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silently fail if sound can't be played - don't interrupt order processing
+                System.Diagnostics.Debug.WriteLine($"Failed to play notification sound: {ex.Message}");
             }
         }
 

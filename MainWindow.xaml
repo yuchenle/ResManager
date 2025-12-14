@@ -121,7 +121,7 @@
                                                 <StackPanel Margin="10" HorizontalAlignment="Center">
                                                     <Image Width="64" Height="64" Margin="0,0,0,5">
                                                         <Image.Source>
-                                                            <Binding Path="Capacity" Converter="{StaticResource TableIconConverter}"/>
+                                                            <Binding Converter="{StaticResource TableIconConverter}"/>
                                                         </Image.Source>
                                                     </Image>
                                                     <TextBlock Text="{Binding Name}" 

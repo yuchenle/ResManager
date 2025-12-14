@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using RestoManager.Models;
 
 namespace RestoManager.Converters
 {
@@ -9,9 +10,33 @@ namespace RestoManager.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is int capacity)
+            string iconPath = null;
+
+            if (value is Table table)
             {
-                string iconPath;
+                // Check for take away orders (Emp_ prefix)
+                if (table.Name.StartsWith("Emp_", StringComparison.OrdinalIgnoreCase))
+                {
+                    iconPath = "pack://application:,,,/Assets/emporter.ico";
+                }
+                // Check for online orders (Web_ prefix)
+                else if (table.Name.StartsWith("Web_", StringComparison.OrdinalIgnoreCase))
+                {
+                    iconPath = "pack://application:,,,/Assets/web.ico";
+                }
+                // Regular tables based on capacity
+                else if (table.Capacity <= 2)
+                {
+                    iconPath = "pack://application:,,,/Assets/1_2.ico";
+                }
+                else
+                {
+                    iconPath = "pack://application:,,,/Assets/2Plus.ico";
+                }
+            }
+            else if (value is int capacity)
+            {
+                // Fallback for backward compatibility if capacity is passed directly
                 if (capacity <= 2)
                 {
                     iconPath = "pack://application:,,,/Assets/1_2.ico";
@@ -20,7 +45,10 @@ namespace RestoManager.Converters
                 {
                     iconPath = "pack://application:,,,/Assets/2Plus.ico";
                 }
+            }
 
+            if (iconPath != null)
+            {
                 try 
                 {
                     var bitmap = new BitmapImage();
