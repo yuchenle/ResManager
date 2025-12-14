@@ -28,16 +28,6 @@ namespace RestoManager
             }
         }
 
-        private void TableBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is System.Windows.Controls.Border border && border.DataContext is Table table)
-            {
-                if (DataContext is MainViewModel viewModel)
-                {
-                    viewModel.ShowTableDetailsCommand.Execute(table);
-                }
-            }
-        }
     }
 }
 

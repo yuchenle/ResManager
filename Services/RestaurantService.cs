@@ -144,21 +144,6 @@ namespace RestoManager.Services
 
         private void InitializeData()
         {
-            // Initialize with 20 default tables
-            string[] locations = { "Window", "Center", "Private", "Patio", "Main Hall" };
-            int[] capacities = { 2, 4, 6, 8 };
-            Random random = new Random();
-
-            for (int i = 0; i < 20; i++)
-            {
-                AddTable(new Table 
-                { 
-                    Capacity = capacities[random.Next(capacities.Length)],
-                    Location = locations[random.Next(locations.Length)],
-                    Status = TableStatus.Available 
-                });
-            }
-
             // Load dishes from persistence
             var savedDishes = _persistenceService.LoadDishes();
             if (savedDishes.Count > 0)

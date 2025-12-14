@@ -11,7 +11,6 @@
         Icon="/Assets/app.ico">
     <Window.Resources>
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
-        <converters:TableEqualityConverter x:Key="TableEqualityConverter"/>
         <converters:TableIconConverter x:Key="TableIconConverter"/>
         <converters:TableTotalPriceConverter x:Key="TableTotalPriceConverter"/>
     </Window.Resources>
@@ -57,25 +56,14 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     
-                    <!-- Create Table and Take Away Buttons -->
+                    <!-- Create Take Away Button -->
                     <Grid Grid.Row="0" Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" 
-                                Content="+ Create Table" 
-                                Command="{Binding CreateTableCommand}"
-                                Padding="20,10"
-                                FontSize="20"
-                                MinWidth="180"/>
-                        <Button Grid.Column="2" 
-                                Content="+ Create Take Away" 
+                        <Button Content="+ Create Take Away" 
                                 Command="{Binding CreateTakeAwayCommand}"
                                 Padding="20,10"
                                 FontSize="20"
-                                MinWidth="180"/>
+                                MinWidth="180"
+                                HorizontalAlignment="Center"/>
                     </Grid>
                     
                     <!-- Tables Grid View -->
@@ -100,24 +88,7 @@
                                                     Width="120"
                                                     Height="120"
                                                     Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
-                                                    Cursor="Hand"
-                                                    MouseLeftButtonDown="TableBorder_MouseLeftButtonDown">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Value="True">
-                                                                <DataTrigger.Binding>
-                                                                    <MultiBinding Converter="{StaticResource TableEqualityConverter}">
-                                                                        <Binding/>
-                                                                        <Binding RelativeSource="{RelativeSource AncestorType=Window}" Path="DataContext.SelectedTable"/>
-                                                                    </MultiBinding>
-                                                                </DataTrigger.Binding>
-                                                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryTextBrush}"/>
-                                                                <Setter Property="BorderThickness" Value="2"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
+                                                    Cursor="Hand">
                                                 <StackPanel Margin="10" HorizontalAlignment="Center">
                                                     <Image Width="64" Height="64" Margin="0,0,0,5">
                                                         <Image.Source>
