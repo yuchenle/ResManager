@@ -157,6 +157,57 @@
                                                     <Run Text="Seats: "/>
                                                     <Run Text="{Binding Capacity}"/>
                                                 </TextBlock>
+                                                <TextBlock FontSize="14" Margin="0,0,0,3">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ClientName}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding ClientName}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="Client: " FontWeight="SemiBold"/>
+                                                    <Run Text="{Binding ClientName, Mode=OneWay}"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="14" Margin="0,0,0,3">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding PhoneNumber}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding PhoneNumber}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="Phone: " FontWeight="SemiBold"/>
+                                                    <Run Text="{Binding PhoneNumber, Mode=OneWay}"/>
+                                                </TextBlock>
+                                                <TextBlock FontSize="14" Margin="0,0,0,3">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding PickupTimeDisplay}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding PickupTimeDisplay}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                    <Run Text="Pickup: " FontWeight="SemiBold"/>
+                                                    <Run Text="{Binding PickupTimeDisplay, Mode=OneWay}" FontWeight="Bold"/>
+                                                </TextBlock>
                                                 <TextBlock FontSize="14" FontWeight="SemiBold">
                                                     <TextBlock.Text>
                                                         <MultiBinding Converter="{StaticResource TableTotalPriceConverter}">

@@ -207,12 +207,20 @@ namespace RestoManager.Services
 
         private void ProcessNewOrder(DocumentSnapshot document)
         {
+            // Extract web-order metadata (safe: missing fields just become empty/null)
+            string clientName = ExtractClientName(document);
+            string phoneNumber = ExtractPhoneNumber(document);
+            DateTime? pickupTime = ExtractPickupTime(document);
+
             var table = new Table
             {
                 Capacity = 2,
                 Location = "Web Order",
                 Status = TableStatus.Occupied,
-                Name = $"Web_{_autoWebOrderCount++}"
+                Name = $"Web_{_autoWebOrderCount++}",
+                ClientName = clientName,
+                PhoneNumber = phoneNumber,
+                PickupTime = pickupTime
             };
             _restaurantService.AddTable(table);
 
@@ -264,6 +272,75 @@ namespace RestoManager.Services
                 UnitPrice = price,
                 Quantity = quantity
             });
+        }
+
+        private static string ExtractClientName(DocumentSnapshot document)
+        {
+            string firstName = string.Empty;
+            string lastName = string.Empty;
+
+            if (document.ContainsField("firstName"))
+            {
+                try { firstName = document.GetValue<string>("firstName") ?? string.Empty; } catch { }
+            }
+
+            if (document.ContainsField("lastName"))
+            {
+                try { lastName = document.GetValue<string>("lastName") ?? string.Empty; } catch { }
+            }
+
+            return $"{firstName} {lastName}".Trim();
+        }
+
+        private static string ExtractPhoneNumber(DocumentSnapshot document)
+        {
+            if (!document.ContainsField("phoneNumber"))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                return document.GetValue<string>("phoneNumber") ?? string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static DateTime? ExtractPickupTime(DocumentSnapshot document)
+        {
+            if (!document.ContainsField("pickupTime"))
+            {
+                return null;
+            }
+
+            // Firestore usually stores timestamps as Timestamp, but be tolerant.
+            try
+            {
+                var ts = document.GetValue<Timestamp>("pickupTime");
+                return ts.ToDateTime();
+            }
+            catch { }
+
+            try
+            {
+                return document.GetValue<DateTime>("pickupTime");
+            }
+            catch { }
+
+            try
+            {
+                var s = document.GetValue<string>("pickupTime");
+                if (!string.IsNullOrWhiteSpace(s) && DateTime.TryParse(s, out var dt))
+                {
+                    return dt;
+                }
+            }
+            catch { }
+
+            return null;
         }
 
         public async Task<bool> DeleteOrdersAsync(List<string> documentIds)
