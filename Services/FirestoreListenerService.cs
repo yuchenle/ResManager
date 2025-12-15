@@ -16,7 +16,7 @@ namespace RestoManager.Services
         private readonly RestaurantService _restaurantService;
         private FirestoreDb _db;
         private FirestoreChangeListener _listener;
-        private static int _autoTakeAwayCount = 1;
+        private static int _autoWebOrderCount = 1;
         private bool _isFirstSnapshot = true;
 
         public FirestoreListenerService(RestaurantService restaurantService)
@@ -210,9 +210,9 @@ namespace RestoManager.Services
             var table = new Table
             {
                 Capacity = 2,
-                Location = "Take Away (App)",
+                Location = "Web Order",
                 Status = TableStatus.Occupied,
-                Name = $"Web_{_autoTakeAwayCount++}"
+                Name = $"Web_{_autoWebOrderCount++}"
             };
             _restaurantService.AddTable(table);
 

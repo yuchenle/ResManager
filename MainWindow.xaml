@@ -78,15 +78,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     
-                    <!-- Create Take Away Button -->
-                    <Grid Grid.Row="0" Margin="0,0,0,10">
-                        <Button Content="+ Create Take Away" 
-                                Command="{Binding CreateTakeAwayCommand}"
-                                Padding="20,10"
-                                FontSize="20"
-                                MinWidth="180"
-                                HorizontalAlignment="Center"/>
-                    </Grid>
+                    <!-- Take Away feature removed -->
                     
                     <!-- Tables Grid View -->
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

@@ -16,7 +16,7 @@ namespace RestoManager.ViewModels
         private readonly RestaurantService _restaurantService;
         private FirestoreListenerService? _firestoreService;
         private int _ordersRefreshTrigger;
-        private int _takeAwayCount = 0;
+        // Take Away feature removed
 
         public MainViewModel()
         {
@@ -84,14 +84,12 @@ namespace RestoManager.ViewModels
             private set => SetProperty(ref _ordersRefreshTrigger, value);
         }
 
-        public ICommand CreateTakeAwayCommand { get; private set; } = null!;
         public ICommand ShowAllOrdersCommand { get; private set; } = null!;
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
         public ICommand ShowAccountsCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
-            CreateTakeAwayCommand = new RelayCommand(CreateTakeAway);
             ShowAllOrdersCommand = new RelayCommand(ShowAllOrders);
             ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
             ShowAccountsCommand = new RelayCommand(ShowAccounts);
@@ -120,42 +118,7 @@ namespace RestoManager.ViewModels
             window.Show();
         }
 
-        private void CreateTakeAway()
-        {
-            var vm = new CreateTakeAwayViewModel(_restaurantService);
-            var window = new Views.CreateTakeAwayWindow
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = vm
-            };
-
-            if (window.ShowDialog() == true && vm.CurrentItems.Count > 0)
-            {
-                var table = new Table
-                {
-                    Capacity = 2,
-                    Location = "Take Away",
-                    Status = TableStatus.Available, // AddOrder will update this to Occupied
-                    Name = $"Emp_{_takeAwayCount++}"
-                };
-
-                _restaurantService.AddTable(table);
-
-                var order = new Order
-                {
-                    TableId = table.Id,
-                    Status = OrderStatus.Pending,
-                    Notes = "Take Away"
-                };
-
-                foreach (var item in vm.CurrentItems)
-                {
-                    order.Items.Add(item);
-                }
-
-                _restaurantService.AddOrder(order);
-            }
-        }
+        // Take Away feature removed
 
         private void ShowCheckout(Table? table)
         {

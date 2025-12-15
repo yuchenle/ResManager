@@ -14,13 +14,8 @@ namespace RestoManager.Converters
 
             if (value is Table table)
             {
-                // Check for take away orders (Emp_ prefix)
-                if (table.Name.StartsWith("Emp_", StringComparison.OrdinalIgnoreCase))
-                {
-                    iconPath = "pack://application:,,,/Assets/emporter.ico";
-                }
                 // Check for online orders (Web_ prefix)
-                else if (table.Name.StartsWith("Web_", StringComparison.OrdinalIgnoreCase))
+                if (table.Name.StartsWith("Web_", StringComparison.OrdinalIgnoreCase))
                 {
                     iconPath = "pack://application:,,,/Assets/icons/web.ico";
                 }
