@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Restaurant Manager" Height="800" Width="1400"
         WindowStartupLocation="CenterScreen"
-        Icon="/Assets/app.ico">
+        Icon="pack://application:,,,/Assets/icons/app.ico">
     <Window.Resources>
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
         <converters:TableIconConverter x:Key="TableIconConverter"/>
@@ -30,32 +30,47 @@
                    FontSize="32"
                    HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
-        <!-- Top Bar with See Menu Button -->
+        <!-- Top Bar with Icon Buttons -->
         <Border Grid.Row="1" 
                 BorderBrush="{StaticResource AccentBackgroundBrush}" 
                 BorderThickness="0,0,0,1" 
                 Padding="10,5" 
                 Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="See Menu" 
-                        Command="{Binding ShowMenuCommand}"
-                        Padding="20,10" 
-                        Margin="5,0"
-                        MinWidth="150"
-                        FontSize="20"/>
-                <Button Content="See All Orders" 
-                        Command="{Binding ShowAllOrdersCommand}"
-                        Padding="20,10" 
-                        Margin="5,0"
-                        MinWidth="150"
-                        FontSize="20"/>
+                <!-- See Orders Button -->
+                <Button Command="{Binding ShowAllOrdersCommand}"
+                        Margin="15,0"
+                        Width="100"
+                        Height="100"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="See Orders">
+                    <StackPanel>
+                        <Image Source="pack://application:,,,/Assets/icons/orders.ico" Width="64" Height="64"/>
+                        <TextBlock Text="See Orders" HorizontalAlignment="Center" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Accounts Button -->
+                <Button Command="{Binding ShowAccountsCommand}"
+                        Margin="15,0"
+                        Width="100"
+                        Height="100"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="Accounts">
+                    <StackPanel>
+                        <Image Source="pack://application:,,,/Assets/icons/accounts.ico" Width="64" Height="64"/>
+                        <TextBlock Text="Accounts" HorizontalAlignment="Center" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 
         <!-- Main Content -->
         <Grid Grid.Row="2">
             <!-- Tables Panel -->
-            <GroupBox Header="Tables">
+            <GroupBox Header="Orders">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

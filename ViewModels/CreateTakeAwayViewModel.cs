@@ -12,8 +12,10 @@ namespace RestoManager.ViewModels
     public class CreateTakeAwayViewModel : ObservableObject
     {
         private readonly RestaurantService _restaurantService;
-        private Dish? _selectedDish;
         private OrderItem? _selectedOrderItem;
+        private string _newItemName = string.Empty;
+        private decimal _newItemPrice;
+        private int _newItemQuantity = 1;
 
         public CreateTakeAwayViewModel(RestaurantService restaurantService)
         {
@@ -23,19 +25,27 @@ namespace RestoManager.ViewModels
         }
 
         public ObservableCollection<OrderItem> CurrentItems { get; } = new();
-        public ObservableCollection<Dish> AvailableDishes => _restaurantService.Dishes;
 
-        public Dish? SelectedDish
+        public string NewItemName
         {
-            get => _selectedDish;
+            get => _newItemName;
             set
             {
-                SetProperty(ref _selectedDish, value);
-                if (AddDishCommand is RelayCommand<Dish> relayCommand)
-                {
-                    relayCommand.NotifyCanExecuteChanged();
-                }
+                SetProperty(ref _newItemName, value);
+                ((RelayCommand)AddItemCommand).NotifyCanExecuteChanged();
             }
+        }
+
+        public decimal NewItemPrice
+        {
+            get => _newItemPrice;
+            set => SetProperty(ref _newItemPrice, value);
+        }
+
+        public int NewItemQuantity
+        {
+            get => _newItemQuantity;
+            set => SetProperty(ref _newItemQuantity, value);
         }
 
         public OrderItem? SelectedOrderItem
@@ -61,7 +71,7 @@ namespace RestoManager.ViewModels
 
         public decimal TotalPrice => CurrentItems.Sum(item => item.Subtotal);
 
-        public ICommand AddDishCommand { get; private set; } = null!;
+        public ICommand AddItemCommand { get; private set; } = null!;
         public ICommand RemoveItemCommand { get; private set; } = null!;
         public ICommand IncreaseQuantityCommand { get; private set; } = null!;
         public ICommand DecreaseQuantityCommand { get; private set; } = null!;
@@ -70,7 +80,7 @@ namespace RestoManager.ViewModels
 
         private void InitializeCommands()
         {
-            AddDishCommand = new RelayCommand<Dish>(AddDish, CanAddDish);
+            AddItemCommand = new RelayCommand(AddItem, CanAddItem);
             RemoveItemCommand = new RelayCommand<OrderItem>(RemoveItem, CanModifyItem);
             IncreaseQuantityCommand = new RelayCommand<OrderItem>(IncreaseQuantity, CanModifyItem);
             DecreaseQuantityCommand = new RelayCommand<OrderItem>(DecreaseQuantity, CanModifyItem);
@@ -78,30 +88,34 @@ namespace RestoManager.ViewModels
             CancelCommand = new RelayCommand<Window>(Cancel);
         }
 
-        private bool CanAddDish(Dish? dish)
+        private bool CanAddItem()
         {
-            return dish != null && dish.IsAvailable;
+            return !string.IsNullOrWhiteSpace(NewItemName) && NewItemQuantity > 0;
         }
 
-        private void AddDish(Dish? dish)
+        private void AddItem()
         {
-            if (dish == null || !dish.IsAvailable) return;
-
-            var existingItem = CurrentItems.FirstOrDefault(i => i.DishId == dish.Id);
+            var existingItem = CurrentItems.FirstOrDefault(i => i.DishName.Equals(NewItemName, System.StringComparison.OrdinalIgnoreCase) && i.UnitPrice == NewItemPrice);
             if (existingItem != null)
             {
-                existingItem.Quantity++;
+                existingItem.Quantity += NewItemQuantity;
             }
             else
             {
                 CurrentItems.Add(new OrderItem
                 {
-                    DishId = dish.Id,
-                    DishName = dish.Name,
-                    UnitPrice = dish.Price,
-                    Quantity = 1
+                    DishId = 0, // No catalog
+                    DishName = NewItemName,
+                    UnitPrice = NewItemPrice,
+                    Quantity = NewItemQuantity
                 });
             }
+            
+            // Reset input
+            NewItemName = string.Empty;
+            NewItemQuantity = 1;
+            // Keep price as it might be convenient
+            
             OnPropertyChanged(nameof(TotalPrice));
         }
 

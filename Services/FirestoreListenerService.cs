@@ -254,27 +254,8 @@ namespace RestoManager.Services
 
         private void AddItemToOrder(Order order, string dishName, int quantity, decimal price)
         {
-            var dish = _restaurantService.Dishes
-                .FirstOrDefault(d => d.Name.Equals(dishName, StringComparison.OrdinalIgnoreCase));
-
-            int dishId;
-            if (dish != null)
-            {
-                dishId = dish.Id;
-            }
-            else
-            {
-                // Create temporary dish if it doesn't exist
-                var newDish = new Dish 
-                { 
-                    Name = dishName, 
-                    Price = price, 
-                    Category = DishCategory.MainCourse,
-                    IsAvailable = true 
-                };
-                _restaurantService.AddDish(newDish);
-                dishId = newDish.Id;
-            }
+            // Just use a dummy ID or 0, since we aren't managing a dish catalog anymore
+            int dishId = 0; 
 
             order.Items.Add(new OrderItem
             {

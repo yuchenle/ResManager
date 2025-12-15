@@ -13,19 +13,31 @@ namespace RestoManager
 
         public MainWindow()
         {
-            InitializeComponent();
-
-            if (DataContext is MainViewModel vm)
+            try
             {
-                _firestoreService = new FirestoreListenerService(vm.Service);
-                vm.FirestoreService = _firestoreService;
-                
-                // Construct path safely
-                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string jsonPath = System.IO.Path.Combine(baseDir, "firestore-project.json");
+                InitializeComponent();
 
-                // "restoauthen" is the project ID provided by the user
-                _ = _firestoreService.StartListeningAsync("restoauthen", jsonPath);
+                if (DataContext is MainViewModel vm)
+                {
+                    _firestoreService = new FirestoreListenerService(vm.Service);
+                    vm.FirestoreService = _firestoreService;
+                    
+                    // Construct path safely
+                    string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string jsonPath = System.IO.Path.Combine(baseDir, "firestore-project.json");
+
+                    // "restoauthen" is the project ID provided by the user
+                    _ = _firestoreService.StartListeningAsync("restoauthen", jsonPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error initializing MainWindow:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                    "Initialization Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                throw; // Re-throw to let App.xaml.cs handle it
             }
         }
 

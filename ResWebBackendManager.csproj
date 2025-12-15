@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Assets\icons\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\*.ico" />
+    <Resource Include="Assets\icons\*.ico" />
   </ItemGroup>
+
+  <!-- Alternative: If Resource doesn't work, uncomment this and comment out the Resource ItemGroup above -->
+  <!--
+  <ItemGroup>
+    <Content Include="Assets\icons\*.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  -->
 
   <ItemGroup>
     <None Update="firestore-project.json">

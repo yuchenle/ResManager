@@ -48,7 +48,7 @@ namespace RestoManager.ViewModels
 
         public decimal Subtotal => BillItems.Sum(item => item.Subtotal);
         public decimal TaxRate => 0.10m; // 10% tax
-        public decimal TaxAmount => Subtotal * TaxRate;
+        public decimal TaxAmount => BillItems.Sum(item => item.Tax);
         public decimal TotalAmount => Subtotal + TaxAmount;
 
         private void BillItems_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -80,6 +80,9 @@ namespace RestoManager.ViewModels
 
             foreach (var order in activeOrders)
             {
+                // Check if this is a web order (prices already include tax)
+                bool isWebOrder = !string.IsNullOrEmpty(order.FirestoreDocumentId);
+                
                 foreach (var item in order.Items)
                 {
                     BillItems.Add(new BillItem
@@ -88,7 +91,7 @@ namespace RestoManager.ViewModels
                         Quantity = item.Quantity,
                         UnitPrice = item.UnitPrice,
                         Subtotal = item.Subtotal,
-                        Tax = item.Subtotal * TaxRate
+                        Tax = isWebOrder ? 0m : item.Subtotal * TaxRate
                     });
                 }
             }

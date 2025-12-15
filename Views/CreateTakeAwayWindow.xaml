@@ -130,43 +130,39 @@
                           HorizontalAlignment="Stretch" 
                           Background="{StaticResource AccentBackgroundBrush}"/>
 
-            <!-- Right Panel: Menu Items -->
+            <!-- Right Panel: Add Custom Item -->
             <GroupBox Grid.Column="2" 
-                      Header="Menu Items" 
+                      Header="Add Item" 
                       Margin="10,0,0,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <StackPanel Margin="10">
+                    <TextBlock Text="Dish Name:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" 
+                             Height="30" 
+                             VerticalContentAlignment="Center"
+                             Padding="5,0"
+                             Margin="0,0,0,15"/>
 
-                    <!-- Menu Items List -->
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding AvailableDishes}"
-                              SelectedItem="{Binding SelectedDish}"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              HeadersVisibility="Column"
-                              Margin="0,0,0,10"
-                              MouseDoubleClick="MenuItemsDataGrid_MouseDoubleClick">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="80"/>
-                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="80"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <TextBlock Text="Price:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewItemPrice, UpdateSourceTrigger=PropertyChanged}" 
+                             Height="30" 
+                             VerticalContentAlignment="Center"
+                             Padding="5,0"
+                             Margin="0,0,0,15"/>
 
-                    <!-- Add Button -->
-                    <Button Grid.Row="1"
-                            Content="Add to Order"
-                            Command="{Binding AddDishCommand}"
-                            CommandParameter="{Binding SelectedDish}"
+                    <TextBlock Text="Quantity:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewItemQuantity, UpdateSourceTrigger=PropertyChanged}" 
+                             Height="30" 
+                             VerticalContentAlignment="Center"
+                             Padding="5,0"
+                             Margin="0,0,0,20"/>
+
+                    <Button Content="Add to Order"
+                            Command="{Binding AddItemCommand}"
                             Style="{StaticResource CallToActionButtonStyle}"
-                            Padding="10,5"
+                            Padding="10,10"
+                            Height="40"
                             HorizontalAlignment="Stretch"/>
-                </Grid>
+                </StackPanel>
             </GroupBox>
         </Grid>
 

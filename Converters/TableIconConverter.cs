@@ -22,7 +22,7 @@ namespace RestoManager.Converters
                 // Check for online orders (Web_ prefix)
                 else if (table.Name.StartsWith("Web_", StringComparison.OrdinalIgnoreCase))
                 {
-                    iconPath = "pack://application:,,,/Assets/web.ico";
+                    iconPath = "pack://application:,,,/Assets/icons/web.ico";
                 }
                 // Regular tables based on capacity
                 else if (table.Capacity <= 2)

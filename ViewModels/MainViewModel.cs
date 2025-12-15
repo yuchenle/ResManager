@@ -15,7 +15,6 @@ namespace RestoManager.ViewModels
     {
         private readonly RestaurantService _restaurantService;
         private FirestoreListenerService? _firestoreService;
-        private Dish? _selectedDish;
         private int _ordersRefreshTrigger;
         private int _takeAwayCount = 0;
 
@@ -75,7 +74,6 @@ namespace RestoManager.ViewModels
         }
 
         public ObservableCollection<Table> Tables => _restaurantService.Tables;
-        public ObservableCollection<Dish> Dishes => _restaurantService.Dishes;
         public ObservableCollection<Order> Orders => _restaurantService.Orders;
         public ObservableCollection<Reservation> Reservations => _restaurantService.Reservations;
 
@@ -86,35 +84,24 @@ namespace RestoManager.ViewModels
             private set => SetProperty(ref _ordersRefreshTrigger, value);
         }
 
-        public Dish? SelectedDish
-        {
-            get => _selectedDish;
-            set
-            {
-                SetProperty(ref _selectedDish, value);
-                if (DeleteDishCommand is RelayCommand<Dish> relayCommand)
-                {
-                    relayCommand.NotifyCanExecuteChanged();
-                }
-            }
-        }
-
         public ICommand CreateTakeAwayCommand { get; private set; } = null!;
-        public ICommand ShowMenuCommand { get; private set; } = null!;
         public ICommand ShowAllOrdersCommand { get; private set; } = null!;
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
-        public ICommand AddDishCommand { get; private set; } = null!;
-        public ICommand DeleteDishCommand { get; private set; } = null!;
+        public ICommand ShowAccountsCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
             CreateTakeAwayCommand = new RelayCommand(CreateTakeAway);
-            ShowMenuCommand = new RelayCommand(ShowMenu);
             ShowAllOrdersCommand = new RelayCommand(ShowAllOrders);
             ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
-            AddDishCommand = new RelayCommand(AddDish);
-            DeleteDishCommand = new RelayCommand<Dish>(DeleteDish, CanDeleteDish);
+            ShowAccountsCommand = new RelayCommand(ShowAccounts);
         }
+
+        private void ShowAccounts()
+        {
+            MessageBox.Show("Accounts feature coming soon!", "Accounts");
+        }
+
 
         private void ShowAllOrders()
         {
@@ -170,15 +157,6 @@ namespace RestoManager.ViewModels
             }
         }
 
-        private void ShowMenu()
-        {
-            var menuWindow = new Views.MenuWindow(this)
-            {
-                Owner = Application.Current.MainWindow
-            };
-            menuWindow.Show();
-        }
-
         private void ShowCheckout(Table? table)
         {
             if (table == null) return;
@@ -189,40 +167,6 @@ namespace RestoManager.ViewModels
                 DataContext = new CheckoutViewModel(table, _restaurantService)
             };
             checkoutWindow.ShowDialog();
-        }
-
-        private void AddDish()
-        {
-            var dialog = new Views.CreateDishDialog
-            {
-                Owner = Application.Current.MainWindow
-            };
-
-            if (dialog.ShowDialog() == true && dialog.CreatedDish != null)
-            {
-                _restaurantService.AddDish(dialog.CreatedDish);
-            }
-        }
-
-        private bool CanDeleteDish(Dish? dish)
-        {
-            return dish != null;
-        }
-
-        private void DeleteDish(Dish? dish)
-        {
-            if (dish == null) return;
-
-            var result = MessageBox.Show(
-                $"Are you sure you want to delete '{dish.Name}'?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                _restaurantService.RemoveDish(dish);
-            }
         }
     }
 }
