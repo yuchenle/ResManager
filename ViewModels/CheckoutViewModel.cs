@@ -85,13 +85,32 @@ namespace RestoManager.ViewModels
                 
                 foreach (var item in order.Items)
                 {
+                    decimal subtotal;
+                    decimal tax;
+                    
+                    if (isWebOrder)
+                    {
+                        // For web orders: price includes tax, so extract tax-free price
+                        // Tax-free price = price / 1.1
+                        // Tax = price - tax-free price
+                        decimal taxFreeSubtotal = item.Subtotal / 1.1m;
+                        subtotal = taxFreeSubtotal;
+                        tax = item.Subtotal - taxFreeSubtotal;
+                    }
+                    else
+                    {
+                        // For regular orders: price is pre-tax
+                        subtotal = item.Subtotal;
+                        tax = item.Subtotal * TaxRate;
+                    }
+                    
                     BillItems.Add(new BillItem
                     {
                         DishName = item.DishName,
                         Quantity = item.Quantity,
                         UnitPrice = item.UnitPrice,
-                        Subtotal = item.Subtotal,
-                        Tax = isWebOrder ? 0m : item.Subtotal * TaxRate
+                        Subtotal = subtotal,
+                        Tax = tax
                     });
                 }
             }
