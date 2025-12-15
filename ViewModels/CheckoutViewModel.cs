@@ -118,8 +118,12 @@ namespace RestoManager.ViewModels
 
         private void PrintBill()
         {
+            // Mark the bill as printed
+            _table.IsBillPrinted = true;
+            
             // TODO: Implement print functionality
-            // For now, do nothing as requested
+            // For now, just mark as printed and close the window
+            // The window will be closed by setting DialogResult
         }
 
         private void Cancel()

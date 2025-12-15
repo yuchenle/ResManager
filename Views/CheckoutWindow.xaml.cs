@@ -14,5 +14,13 @@ namespace RestoManager.Views
         {
             Close();
         }
+
+        private void PrintBillButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Command binding on the button already executed the PrintBillCommand.
+            // This handler only closes the window after printing.
+            DialogResult = true;
+            Close();
+        }
     }
 }

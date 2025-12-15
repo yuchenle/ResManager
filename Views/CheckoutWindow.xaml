@@ -104,7 +104,8 @@
                     Style="{StaticResource CallToActionButtonStyle}"
                     Padding="20,8"
                     MinWidth="120"
-                    IsDefault="True"/>
+                    IsDefault="True"
+                    Click="PrintBillButton_Click"/>
         </StackPanel>
     </Grid>
 </Window>

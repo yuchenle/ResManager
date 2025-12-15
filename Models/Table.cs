@@ -18,6 +18,7 @@ namespace RestoManager.Models
         private TableStatus _status;
         private string _location = string.Empty;
         private string _name = string.Empty;
+        private bool _isBillPrinted;
 
         public int Id
         {
@@ -66,6 +67,16 @@ namespace RestoManager.Models
             {
                 _location = value;
                 OnPropertyChanged(nameof(Location));
+            }
+        }
+
+        public bool IsBillPrinted
+        {
+            get => _isBillPrinted;
+            set
+            {
+                _isBillPrinted = value;
+                OnPropertyChanged(nameof(IsBillPrinted));
             }
         }
 
