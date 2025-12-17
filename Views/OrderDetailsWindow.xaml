@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:RestoManager.Resources"
         mc:Ignorable="d"
-        Title="Order Details" Height="500" Width="450"
+        Title="Order Details" Height="640" Width="480"
+        FontSize="16"
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <res:LocalizedStrings x:Key="LocalizedStrings"/>
