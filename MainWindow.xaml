@@ -141,33 +141,49 @@
                                         </Grid.ColumnDefinitions>
                                         
                                         <StackPanel Grid.Column="0">
-                                            <Border BorderBrush="{StaticResource AccentBackgroundBrush}" 
-                                                    BorderThickness="1" 
-                                                    Width="120"
-                                                    Height="120"
-                                                    Cursor="Hand">
-                                                <Border.Background>
-                                                    <MultiBinding Converter="{StaticResource StatusToColorConverter}">
-                                                        <Binding Path="Name"/>
-                                                        <Binding Path="Status"/>
-                                                    </MultiBinding>
-                                                </Border.Background>
-                                                <StackPanel Margin="10" HorizontalAlignment="Center">
-                                                    <Image Width="64" Height="64" Margin="0,0,0,5">
-                                                        <Image.Source>
-                                                            <Binding Converter="{StaticResource TableIconConverter}"/>
-                                                        </Image.Source>
-                                                    </Image>
-                                                    <TextBlock Text="{Binding Name}" 
-                                                               FontWeight="Bold" 
-                                                               FontSize="18"
-                                                               HorizontalAlignment="Center"/>
-                                                    <TextBlock Text="{Binding Location}" 
-                                                               FontSize="16"
-                                                               HorizontalAlignment="Center"
-                                                               Margin="0,2,0,0"/>
-                                                </StackPanel>
-                                            </Border>
+                                            <Grid Width="120" Height="120">
+                                                <Border BorderBrush="{StaticResource AccentBackgroundBrush}" 
+                                                        BorderThickness="1">
+                                                    <Border.Background>
+                                                        <MultiBinding Converter="{StaticResource StatusToColorConverter}">
+                                                            <Binding Path="Name"/>
+                                                            <Binding Path="Status"/>
+                                                        </MultiBinding>
+                                                    </Border.Background>
+                                                    <StackPanel Margin="10" HorizontalAlignment="Center">
+                                                        <Image Width="64" Height="64" Margin="0,0,0,5">
+                                                            <Image.Source>
+                                                                <Binding Converter="{StaticResource TableIconConverter}"/>
+                                                            </Image.Source>
+                                                        </Image>
+                                                        <TextBlock Text="{Binding Name}" 
+                                                                   FontWeight="Bold" 
+                                                                   FontSize="18"
+                                                                   HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Location}" 
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Button Command="{Binding DataContext.ShowOrderDetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Cursor="Hand"
+                                                        Padding="0">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Name, Converter={StaticResource IsWebOrderConverter}}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </Grid>
                                             
                                             <Button Content="{Binding Checkout, Source={StaticResource LocalizedStrings}}" 
                                                     Command="{Binding DataContext.ShowCheckoutCommand, RelativeSource={RelativeSource AncestorType=Window}}"

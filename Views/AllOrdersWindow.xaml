@@ -8,7 +8,8 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="All Web Orders" Height="700" Width="900"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
     <Window.Resources>
         <res:LocalizedStrings x:Key="LocalizedStrings"/>
         <CollectionViewSource x:Key="GroupedOrders" Source="{Binding Orders}">

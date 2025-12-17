@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using RestoManager.Models;
 using RestoManager.ViewModels;
 
@@ -41,6 +42,14 @@ namespace RestoManager.Views
                     }
                     viewModel.UpdateSelectedOrders(selectedOrders);
                 }
+            }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
             }
         }
     }

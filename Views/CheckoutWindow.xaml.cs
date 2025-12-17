@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using RestoManager.ViewModels;
 
 namespace RestoManager.Views
@@ -21,6 +22,14 @@ namespace RestoManager.Views
             // This handler only closes the window after printing.
             DialogResult = true;
             Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
         }
     }
 }

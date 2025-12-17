@@ -97,6 +97,7 @@ namespace RestoManager.ViewModels
         public ICommand ShowAllOrdersCommand { get; private set; } = null!;
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
         public ICommand ShowAccountsCommand { get; private set; } = null!;
+        public ICommand ShowOrderDetailsCommand { get; private set; } = null!;
 
         public LocalizedStrings LocalizedStrings => _localizedStrings;
 
@@ -119,6 +120,7 @@ namespace RestoManager.ViewModels
             ShowAllOrdersCommand = new RelayCommand(ShowAllOrders);
             ShowCheckoutCommand = new RelayCommand<Table>(ShowCheckout);
             ShowAccountsCommand = new RelayCommand(ShowAccounts);
+            ShowOrderDetailsCommand = new RelayCommand<Table>(ShowOrderDetails);
         }
 
         private void ShowAccounts()
@@ -164,6 +166,25 @@ namespace RestoManager.ViewModels
                 DataContext = new CheckoutViewModel(table, _restaurantService)
             };
             checkoutWindow.ShowDialog();
+        }
+
+        private void ShowOrderDetails(Table? table)
+        {
+            if (table == null) return;
+
+            // Only show order details for web orders
+            if (!table.Name.StartsWith("Web_", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Find the order associated with this table
+            var order = Orders.FirstOrDefault(o => o.TableId == table.Id);
+            if (order == null) return;
+
+            var window = new Views.OrderDetailsWindow(order)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
         }
     }
 }

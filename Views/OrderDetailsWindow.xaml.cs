@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using RestoManager.Models;
 
 namespace RestoManager.Views
@@ -20,6 +21,14 @@ namespace RestoManager.Views
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
         }
     }
 }

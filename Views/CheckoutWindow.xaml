@@ -4,7 +4,8 @@
         xmlns:res="clr-namespace:RestoManager.Resources"
         Title="Checkout" Height="600" Width="800"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize"
+        KeyDown="Window_KeyDown">
     <Window.Resources>
         <res:LocalizedStrings x:Key="LocalizedStrings"/>
     </Window.Resources>
