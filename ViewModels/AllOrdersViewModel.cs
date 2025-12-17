@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using RestoManager.Models;
+using RestoManager.Resources;
 using RestoManager.Services;
 
 namespace RestoManager.ViewModels
@@ -20,6 +21,7 @@ namespace RestoManager.ViewModels
         private ObservableCollection<Order> _orders;
         private IList _selectedOrders = new List<Order>();
         private bool _hasSelectedOrders;
+        private LocalizedStrings _localizedStrings = LocalizedStrings.Instance;
 
         public AllOrdersViewModel(FirestoreListenerService firestoreService)
         {
@@ -115,18 +117,22 @@ namespace RestoManager.ViewModels
 
             if (documentIds.Count == 0)
             {
-                MessageBox.Show("No valid orders selected for deletion.", "Delete Orders", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    _localizedStrings.NoValidOrdersSelected, 
+                    _localizedStrings.DeleteOrders, 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Warning);
                 return;
             }
 
             // Show confirmation dialog
             var message = documentIds.Count == 1
-                ? "Are you sure you want to delete this order?"
-                : $"Are you sure you want to delete {documentIds.Count} orders?";
+                ? _localizedStrings.AreYouSureDeleteOrder
+                : string.Format(_localizedStrings.AreYouSureDeleteOrders, documentIds.Count);
 
             var result = MessageBox.Show(
                 message,
-                "Confirm Delete",
+                _localizedStrings.ConfirmDelete,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -146,11 +152,13 @@ namespace RestoManager.ViewModels
                         UpdateHasSelectedOrders();
                     });
 
+                    var successMessage = documentIds.Count == 1
+                        ? _localizedStrings.OrderDeletedSuccessfully
+                        : string.Format(_localizedStrings.OrdersDeletedSuccessfully, documentIds.Count);
+
                     MessageBox.Show(
-                        documentIds.Count == 1
-                            ? "Order deleted successfully."
-                            : $"{documentIds.Count} orders deleted successfully.",
-                        "Delete Orders",
+                        successMessage,
+                        _localizedStrings.DeleteOrders,
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
                 }

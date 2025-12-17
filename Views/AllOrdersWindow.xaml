@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:RestoManager.ViewModels"
+        xmlns:res="clr-namespace:RestoManager.Resources"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="All Web Orders" Height="700" Width="900"
         WindowStartupLocation="CenterScreen">
-    
     <Window.Resources>
+        <res:LocalizedStrings x:Key="LocalizedStrings"/>
         <CollectionViewSource x:Key="GroupedOrders" Source="{Binding Orders}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="OrderTime.Date"/>
@@ -27,10 +28,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Web Orders History" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+        <TextBlock Text="{Binding WebOrdersHistory, Source={StaticResource LocalizedStrings}}" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
-            <Button Content="Delete" 
+            <Button Content="{Binding Delete, Source={StaticResource LocalizedStrings}}" 
                     Command="{Binding DeleteOrdersCommand}"
                     Padding="15,5"
                     FontSize="14"

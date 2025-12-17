@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RestoManager.Models;
+using RestoManager.Resources;
 using RestoManager.Services;
 using RestoManager.Views;
 
@@ -16,6 +18,8 @@ namespace RestoManager.ViewModels
         private readonly RestaurantService _restaurantService;
         private FirestoreListenerService? _firestoreService;
         private int _ordersRefreshTrigger;
+        private string _selectedLanguage = "fr"; // French as default
+        private LocalizedStrings _localizedStrings = LocalizedStrings.Instance;
         // Take Away feature removed
 
         public MainViewModel()
@@ -24,6 +28,12 @@ namespace RestoManager.ViewModels
             _restaurantService.Orders.CollectionChanged += Orders_CollectionChanged;
             SubscribeToOrderChanges();
             InitializeCommands();
+            
+            // Subscribe to language changes
+            LocalizationService.Instance.CultureChanged += (s, e) => 
+            {
+                OnPropertyChanged(nameof(LocalizedStrings));
+            };
         }
 
         private void Orders_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -88,6 +98,22 @@ namespace RestoManager.ViewModels
         public ICommand ShowCheckoutCommand { get; private set; } = null!;
         public ICommand ShowAccountsCommand { get; private set; } = null!;
 
+        public LocalizedStrings LocalizedStrings => _localizedStrings;
+
+        public List<string> AvailableLanguages => new List<string> { "en", "fr", "zh" };
+
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                if (SetProperty(ref _selectedLanguage, value))
+                {
+                    LocalizationService.Instance.SetLanguage(value);
+                }
+            }
+        }
+
         private void InitializeCommands()
         {
             ShowAllOrdersCommand = new RelayCommand(ShowAllOrders);
@@ -97,7 +123,11 @@ namespace RestoManager.ViewModels
 
         private void ShowAccounts()
         {
-            MessageBox.Show("Accounts feature coming soon!", "Accounts");
+            MessageBox.Show(
+                LocalizedStrings.AccountsComingSoon, 
+                LocalizedStrings.AccountsTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
 
@@ -105,7 +135,11 @@ namespace RestoManager.ViewModels
         {
             if (FirestoreService == null)
             {
-                MessageBox.Show("Firestore service is not initialized yet.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    LocalizedStrings.FirestoreNotInitialized, 
+                    LocalizedStrings.ErrorTitle, 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Warning);
                 return;
             }
 

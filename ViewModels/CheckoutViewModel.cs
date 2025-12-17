@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RestoManager.Models;
+using RestoManager.Resources;
 using RestoManager.Services;
 
 namespace RestoManager.ViewModels
@@ -12,6 +13,7 @@ namespace RestoManager.ViewModels
     {
         private readonly Table _table;
         private readonly RestaurantService _restaurantService;
+        private LocalizedStrings _localizedStrings = LocalizedStrings.Instance;
 
         public CheckoutViewModel(Table table, RestaurantService restaurantService)
         {
@@ -19,11 +21,21 @@ namespace RestoManager.ViewModels
             _restaurantService = restaurantService;
             InitializeCommands();
             LoadBillItems();
+            
+            // Subscribe to language changes
+            LocalizationService.Instance.CultureChanged += (s, e) => 
+            {
+                OnPropertyChanged(nameof(TableCheckoutTitle));
+                OnPropertyChanged(nameof(LocalizedStrings));
+            };
         }
 
         public int TableId => _table.Id;
         public int Capacity => _table.Capacity;
         public string Location => _table.Location;
+        public LocalizedStrings LocalizedStrings => _localizedStrings;
+        
+        public string TableCheckoutTitle => string.Format(LocalizedStrings.TableCheckout, TableId);
 
         private ObservableCollection<BillItem> _billItems = new();
         public ObservableCollection<BillItem> BillItems

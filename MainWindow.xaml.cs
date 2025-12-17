@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using RestoManager.Models;
+using RestoManager.Resources;
 using RestoManager.ViewModels;
 using RestoManager.Services;
 using System;
@@ -10,6 +11,7 @@ namespace RestoManager
     public partial class MainWindow : Window
     {
         private FirestoreListenerService _firestoreService;
+        private LocalizedStrings _localizedStrings = LocalizedStrings.Instance;
 
         public MainWindow()
         {
@@ -34,7 +36,7 @@ namespace RestoManager
             {
                 MessageBox.Show(
                     $"Error initializing MainWindow:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
-                    "Initialization Error",
+                    _localizedStrings.InitializationError,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 throw; // Re-throw to let App.xaml.cs handle it
