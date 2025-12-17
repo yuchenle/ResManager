@@ -81,7 +81,12 @@
             
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="4" Margin="0,2" Padding="10" Background="White">
+                    <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="4" Margin="0,2" Padding="10" Background="White" Cursor="Hand">
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" 
+                                          Command="{Binding DataContext.ShowOrderDetailsCommand, RelativeSource={RelativeSource AncestorType=ListView}}" 
+                                          CommandParameter="{Binding}"/>
+                        </Border.InputBindings>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="80"/>

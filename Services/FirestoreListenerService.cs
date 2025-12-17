@@ -156,7 +156,10 @@ namespace RestoManager.Services
             {
                 TableId = 0, 
                 Status = OrderStatus.Pending,
-                FirestoreDocumentId = document.Id
+                FirestoreDocumentId = document.Id,
+                ClientName = ExtractClientName(document),
+                PhoneNumber = ExtractPhoneNumber(document),
+                PickupTime = ExtractPickupTime(document)
             };
 
             if (document.ContainsField("createdAt"))

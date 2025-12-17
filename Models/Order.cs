@@ -25,6 +25,9 @@ namespace RestoManager.Models
         private ObservableCollection<OrderItem> _items = new();
         private string _notes = string.Empty;
         private string _firestoreDocumentId = string.Empty;
+        private string _clientName = string.Empty;
+        private string _phoneNumber = string.Empty;
+        private DateTime? _pickupTime;
 
         public Order()
         {
@@ -149,6 +152,36 @@ namespace RestoManager.Models
             {
                 _firestoreDocumentId = value;
                 OnPropertyChanged(nameof(FirestoreDocumentId));
+            }
+        }
+
+        public string ClientName
+        {
+            get => _clientName;
+            set
+            {
+                _clientName = value;
+                OnPropertyChanged(nameof(ClientName));
+            }
+        }
+
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set
+            {
+                _phoneNumber = value;
+                OnPropertyChanged(nameof(PhoneNumber));
+            }
+        }
+
+        public DateTime? PickupTime
+        {
+            get => _pickupTime;
+            set
+            {
+                _pickupTime = value;
+                OnPropertyChanged(nameof(PickupTime));
             }
         }
 

@@ -30,7 +30,16 @@ namespace RestoManager.ViewModels
             
             _firestoreService.NewOrderReceived += OnNewOrderReceived;
             DeleteOrdersCommand = new RelayCommand(DeleteOrders, () => HasSelectedOrders);
+            ShowOrderDetailsCommand = new RelayCommand<Order>(ShowOrderDetails);
             LoadOrdersAsync();
+        }
+
+        private void ShowOrderDetails(Order order)
+        {
+            if (order == null) return;
+            
+            var window = new RestoManager.Views.OrderDetailsWindow(order);
+            window.ShowDialog();
         }
 
         public ObservableCollection<Order> Orders
@@ -81,6 +90,7 @@ namespace RestoManager.ViewModels
         }
 
         public ICommand DeleteOrdersCommand { get; }
+        public ICommand ShowOrderDetailsCommand { get; }
 
         private void UpdateHasSelectedOrders()
         {
